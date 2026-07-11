@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --brand-primary: #F26522;
+  --brand-primary-dark: #D94F0D;
+  --light-background: #FFFDF9;
+  --light-card: #FFFFFF;
+  --light-text: #1A1A1A;
+  --light-text-secondary: #666666;
+  --light-border: #E5E5E5;
+  --dark-background: #111111;
+  --dark-card: #1C1C1C;
+  --dark-text: #F5F5F5;
+  --dark-text-secondary: #A0A0A0;
+  --dark-border: #333333;
+}
+
+@theme {
+  --color-brand: var(--brand-primary);
+  --color-brand-dark: var(--brand-primary-dark);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-tajawal), var(--font-inter), system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="light"] {
+  background-color: var(--light-background);
+  color: var(--light-text);
+}
+
+[data-theme="dark"] {
+  background-color: var(--dark-background);
+  color: var(--dark-text);
+}
+
+/* Hide scrollbar but keep scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Bottom sheet animation */
+.bottom-sheet-enter {
+  transform: translateY(100%);
+}
+.bottom-sheet-enter-active {
+  transform: translateY(0);
+  transition: transform 0.3s ease-out;
+}
+.bottom-sheet-exit {
+  transform: translateY(0);
+}
+.bottom-sheet-exit-active {
+  transform: translateY(100%);
+  transition: transform 0.3s ease-in;
+}
+
+/* Animations */
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Safe area support */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
