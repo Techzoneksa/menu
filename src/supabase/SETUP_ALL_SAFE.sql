@@ -5,27 +5,10 @@ BEGIN;
 -- Run: 1..N times safely inside a transaction
 -- ============================================================
 
--- 1. Triggers
-DROP TRIGGER IF EXISTS set_menu_categories_updated_at ON public.menu_categories;
-DROP TRIGGER IF EXISTS set_menu_products_updated_at ON public.menu_products;
-DROP TRIGGER IF EXISTS set_product_variants_updated_at ON public.product_variants;
-DROP TRIGGER IF EXISTS set_addon_groups_updated_at ON public.addon_groups;
-DROP TRIGGER IF EXISTS set_addon_items_updated_at ON public.addon_items;
-DROP TRIGGER IF EXISTS set_menu_banners_updated_at ON public.menu_banners;
-DROP TRIGGER IF EXISTS set_menu_settings_updated_at ON public.menu_settings;
-
--- 2. Functions
+-- 1. Functions
 CREATE OR REPLACE FUNCTION public.handle_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
-
-CREATE OR REPLACE FUNCTION public.is_admin()
-RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
-  SELECT EXISTS (SELECT 1 FROM public.admin_users WHERE user_id = auth.uid());
-$$;
-
-REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
 
 -- 3. Tables (CREATE IF NOT EXISTS)
 CREATE TABLE IF NOT EXISTS public.menu_categories (
@@ -143,6 +126,15 @@ CREATE TABLE IF NOT EXISTS public.admin_users (
   created_by uuid REFERENCES auth.users(id) ON DELETE SET NULL
 );
 
+-- Create admin check function only after admin_users exists
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT EXISTS (SELECT 1 FROM public.admin_users WHERE user_id = auth.uid());
+$$;
+
+REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
+
 -- 4. Foreign keys (add if missing)
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'menu_products_category_id_fkey') THEN
@@ -200,7 +192,15 @@ CREATE INDEX IF NOT EXISTS idx_addon_groups_sort_order ON public.addon_groups(so
 CREATE INDEX IF NOT EXISTS idx_menu_banners_sort_order ON public.menu_banners(sort_order);
 CREATE INDEX IF NOT EXISTS idx_product_addon_groups_addon_group_id ON public.product_addon_groups(addon_group_id);
 
--- 6. Triggers (re-create)
+-- 6. Triggers (drop safely, then re-create)
+DROP TRIGGER IF EXISTS set_menu_categories_updated_at ON public.menu_categories;
+DROP TRIGGER IF EXISTS set_menu_products_updated_at ON public.menu_products;
+DROP TRIGGER IF EXISTS set_product_variants_updated_at ON public.product_variants;
+DROP TRIGGER IF EXISTS set_addon_groups_updated_at ON public.addon_groups;
+DROP TRIGGER IF EXISTS set_addon_items_updated_at ON public.addon_items;
+DROP TRIGGER IF EXISTS set_menu_banners_updated_at ON public.menu_banners;
+DROP TRIGGER IF EXISTS set_menu_settings_updated_at ON public.menu_settings;
+
 CREATE TRIGGER set_menu_categories_updated_at BEFORE UPDATE ON public.menu_categories FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 CREATE TRIGGER set_menu_products_updated_at BEFORE UPDATE ON public.menu_products FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
 CREATE TRIGGER set_product_variants_updated_at BEFORE UPDATE ON public.product_variants FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
@@ -321,8 +321,8 @@ CREATE POLICY "Admin upload on menu-products" ON storage.objects FOR INSERT WITH
 CREATE POLICY "Admin update on menu-products" ON storage.objects FOR UPDATE USING (bucket_id = 'menu-products' AND public.is_admin());
 CREATE POLICY "Admin delete on menu-products" ON storage.objects FOR DELETE USING (bucket_id = 'menu-products' AND public.is_admin());
 CREATE POLICY "Admin upload on menu-banners" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'menu-banners' AND public.is_admin());
-CREATE POLICY IF NOT EXISTS "Admin update on menu-banners" ON storage.objects FOR UPDATE USING (bucket_id = 'menu-banners' AND public.is_admin());
-CREATE POLICY IF NOT EXISTS "Admin delete on menu-banners" ON storage.objects FOR DELETE USING (bucket_id = 'menu-banners' AND public.is_admin());
+CREATE POLICY "Admin update on menu-banners" ON storage.objects FOR UPDATE USING (bucket_id = 'menu-banners' AND public.is_admin());
+CREATE POLICY "Admin delete on menu-banners" ON storage.objects FOR DELETE USING (bucket_id = 'menu-banners' AND public.is_admin());
 
 -- 13. RPC: swap_category_sort_order
 CREATE OR REPLACE FUNCTION public.swap_category_sort_order(cat_id_a uuid, cat_id_b uuid)
