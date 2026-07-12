@@ -34,6 +34,8 @@ export async function saveProduct(payload: {
   badge_en?: string | null;
   is_available?: boolean;
   is_visible?: boolean;
+  is_hot?: boolean;
+  is_cold?: boolean;
   sort_order?: number;
   variants?: Array<{ name_ar: string; name_en: string; price: number; calories?: number | null; sort_order: number; is_visible: boolean }>;
   addonGroupIds?: string[];

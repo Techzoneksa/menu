@@ -27,6 +27,8 @@ export const productSchema = z.object({
   badge_en: safeTextNullable,
   is_available: z.boolean().default(true),
   is_visible: z.boolean().default(true),
+  is_hot: z.boolean().default(false),
+  is_cold: z.boolean().default(false),
   sort_order: z.number().int().min(0).default(0),
 });
 

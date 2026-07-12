@@ -76,15 +76,27 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
               {displayPrice?.toFixed(2)} {lang === 'ar' ? 'ر.س' : 'SAR'}
             </span>
           </div>
-          {hasDiscount && product.price != null && product.discount_price != null && (
-            <span
-              className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
-              style={{ backgroundColor: '#E6F7E9', color: '#22C55E' }}
-            >
-              <Tag size={10} />
-              {Math.round(((product.price - product.discount_price) / product.price) * 100)}%
-            </span>
-          )}
+          <div className="flex items-center gap-1">
+            {product.is_hot && (
+              <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#FEF2F2', color: '#DC2626' }}>
+                🔥 {lang === 'ar' ? 'حار' : 'Hot'}
+              </span>
+            )}
+            {product.is_cold && (
+              <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}>
+                ❄️ {lang === 'ar' ? 'بارد' : 'Cold'}
+              </span>
+            )}
+            {hasDiscount && product.price != null && product.discount_price != null && (
+              <span
+                className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
+                style={{ backgroundColor: '#E6F7E9', color: '#22C55E' }}
+              >
+                <Tag size={10} />
+                {Math.round(((product.price - product.discount_price) / product.price) * 100)}%
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </button>

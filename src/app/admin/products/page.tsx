@@ -28,7 +28,7 @@ export default function AdminProductsPage() {
   const [f, setF] = useState({
     name_ar: '', name_en: '', slug: '', category_id: '', description_ar: '', description_en: '',
     price: '', calories: '', image_url: null as string | null, badge_ar: '', badge_en: '',
-    is_available: true, is_visible: true, sort_order: 0,
+    is_available: true, is_visible: true, is_hot: false, is_cold: false, sort_order: 0,
   });
 
   const [variants, setVariants] = useState<VariantForm[]>([]);
@@ -61,7 +61,7 @@ export default function AdminProductsPage() {
   });
 
   const resetForm = () => {
-    setF({ name_ar: '', name_en: '', slug: '', category_id: '', description_ar: '', description_en: '', price: '', calories: '', image_url: null, badge_ar: '', badge_en: '', is_available: true, is_visible: true, sort_order: 0 });
+    setF({ name_ar: '', name_en: '', slug: '', category_id: '', description_ar: '', description_en: '', price: '', calories: '', image_url: null, badge_ar: '', badge_en: '', is_available: true, is_visible: true, is_hot: false, is_cold: false, sort_order: 0 });
     setVariants([]);
     setSelectedAddonGroupIds([]);
     setEditing(null);
@@ -75,7 +75,7 @@ export default function AdminProductsPage() {
       name_ar: p.name_ar, name_en: p.name_en, slug: p.slug, category_id: p.category_id,
       description_ar: p.description_ar || '', description_en: p.description_en || '',
       price: p.price?.toString() || '', calories: p.calories?.toString() || '', image_url: p.image_url,
-      badge_ar: p.badge_ar || '', badge_en: p.badge_en || '', is_available: p.is_available, is_visible: p.is_visible, sort_order: p.sort_order,
+      badge_ar: p.badge_ar || '', badge_en: p.badge_en || '', is_available: p.is_available, is_visible: p.is_visible, is_hot: p.is_hot, is_cold: p.is_cold, sort_order: p.sort_order,
     });
     setVariants((p.variants || []).map(v => ({
       name_ar: v.name_ar, name_en: v.name_en, price: v.price.toString(), calories: v.calories?.toString() || '', sort_order: v.sort_order, is_visible: v.is_visible,
@@ -92,7 +92,7 @@ export default function AdminProductsPage() {
       description_ar: f.description_ar || null, description_en: f.description_en || null,
       price: f.price ? parseFloat(f.price) : null, calories: f.calories ? parseInt(f.calories) : null,
       image_url: f.image_url, badge_ar: f.badge_ar || null, badge_en: f.badge_en || null,
-      is_available: f.is_available, is_visible: f.is_visible, sort_order: f.sort_order,
+      is_available: f.is_available, is_visible: f.is_visible, is_hot: f.is_hot, is_cold: f.is_cold, sort_order: f.sort_order,
       variants: variants.map(v => ({
         name_ar: v.name_ar, name_en: v.name_en,
         price: parseFloat(v.price), calories: v.calories ? parseInt(v.calories) : null,
@@ -254,6 +254,19 @@ export default function AdminProductsPage() {
                 <div className="flex gap-4">
                   <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={f.is_visible} onChange={e => setF({ ...f, is_visible: e.target.checked })} className="rounded" /> مرئي</label>
                   <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={f.is_available} onChange={e => setF({ ...f, is_available: e.target.checked })} className="rounded" /> متوفر</label>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">درجة التقديم</label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input type="checkbox" checked={f.is_hot} onChange={e => setF({ ...f, is_hot: e.target.checked })} className="rounded" />
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: '#FEF2F2', color: '#DC2626' }}>🔥 حار</span>
+                    </label>
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input type="checkbox" checked={f.is_cold} onChange={e => setF({ ...f, is_cold: e.target.checked })} className="rounded" />
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}>❄️ بارد</span>
+                    </label>
+                  </div>
                 </div>
                 <ImageUploader bucket="menu-products" currentUrl={f.image_url} onUpload={(url) => setF({ ...f, image_url: url })} onRemove={() => setF({ ...f, image_url: null })} label="الصورة الرئيسية" />
 

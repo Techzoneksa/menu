@@ -24,6 +24,8 @@ export interface MenuProduct {
   discount_price: number | null;
   calories: number | null;
   image_url: string | null;
+  is_hot: boolean;
+  is_cold: boolean;
   badge_ar: string | null;
   badge_en: string | null;
   is_available: boolean;

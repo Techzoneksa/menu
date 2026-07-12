@@ -85,7 +85,7 @@ function ProductSheetContent({ product, onClose }: { product: ProductWithCategor
               </div>
             </div>
 
-            <div className="flex items-center gap-2 mt-4">
+            <div className="flex items-center gap-2 mt-4 flex-wrap">
               {hasDiscount && (
                 <span className="text-sm line-through opacity-50" style={{ color: '#737373' }}>
                   {product.price?.toFixed(2)}
@@ -104,6 +104,21 @@ function ProductSheetContent({ product, onClose }: { product: ProductWithCategor
                 </span>
               )}
             </div>
+
+            {(product.is_hot || product.is_cold) && (
+              <div className="flex items-center gap-2 mt-3">
+                {product.is_hot && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: '#FEF2F2', color: '#DC2626' }}>
+                    🔥 {lang === 'ar' ? 'حار' : 'Hot'}
+                  </span>
+                )}
+                {product.is_cold && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full" style={{ backgroundColor: '#EFF6FF', color: '#2563EB' }}>
+                    ❄️ {lang === 'ar' ? 'بارد' : 'Cold'}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
