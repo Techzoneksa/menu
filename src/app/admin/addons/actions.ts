@@ -31,7 +31,7 @@ export async function saveAddonGroup(formData: { id?: string; name_ar: string; n
     if (error) return { success: false as const, error: error.message };
   }
   revalidatePath('/admin/addons');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -40,7 +40,7 @@ export async function deleteAddonGroup(id: string) {
   const { error } = await supabase.from('addon_groups').delete().eq('id', id);
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/addons');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -56,7 +56,7 @@ export async function saveAddonItem(formData: { id?: string; addon_group_id: str
     if (error) return { success: false as const, error: error.message };
   }
   revalidatePath('/admin/addons');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -65,7 +65,7 @@ export async function deleteAddonItem(id: string) {
   const { error } = await supabase.from('addon_items').delete().eq('id', id);
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/addons');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -78,6 +78,6 @@ export async function saveAddonLinks(groupId: string, productIds: string[]) {
     if (error) return { success: false as const, error: error.message };
   }
   revalidatePath('/admin/addons');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }

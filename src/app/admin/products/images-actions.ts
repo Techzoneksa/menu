@@ -64,7 +64,7 @@ export async function saveProductImage(formData: {
       .single();
     if (error) return { success: false as const, error: error.message };
     revalidatePath('/admin/products');
-    revalidatePath('/menu');
+    revalidatePath('/');
     return { success: true as const, data };
   } else {
     const { data, error } = await supabase
@@ -74,7 +74,7 @@ export async function saveProductImage(formData: {
       .single();
     if (error) return { success: false as const, error: error.message };
     revalidatePath('/admin/products');
-    revalidatePath('/menu');
+    revalidatePath('/');
     return { success: true as const, data };
   }
 }
@@ -84,7 +84,7 @@ export async function deleteProductImage(id: string) {
   const { error } = await supabase.from('product_images').delete().eq('id', id);
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/products');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -96,7 +96,7 @@ export async function toggleProductImageVisibility(id: string, is_visible: boole
     .eq('id', id);
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/products');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -112,6 +112,6 @@ export async function reorderProductImages(imageIds: string[]) {
   if (errorResult?.error) return { success: false as const, error: errorResult.error.message };
 
   revalidatePath('/admin/products');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }

@@ -45,7 +45,7 @@ export async function saveCategory(formData: {
   }
 
   revalidatePath('/admin/categories');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -61,7 +61,7 @@ export async function deleteCategory(id: string) {
   const { error } = await supabase.from('menu_categories').delete().eq('id', id);
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/categories');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -70,7 +70,7 @@ export async function toggleCategoryVisibility(id: string, isVisible: boolean) {
   const { error } = await supabase.from('menu_categories').update({ is_visible: isVisible }).eq('id', id);
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/categories');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -79,6 +79,6 @@ export async function swapCategorySortOrder(catIdA: string, catIdB: string) {
   const { error } = await supabase.rpc('swap_category_sort_order', { cat_id_a: catIdA, cat_id_b: catIdB });
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/categories');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }

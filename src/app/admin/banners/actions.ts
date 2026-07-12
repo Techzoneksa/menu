@@ -33,7 +33,7 @@ export async function saveBanner(formData: {
     if (error) return { success: false as const, error: error.message };
   }
   revalidatePath('/admin/banners');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -42,7 +42,7 @@ export async function deleteBanner(id: string) {
   const { error } = await supabase.from('menu_banners').delete().eq('id', id);
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/banners');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -51,6 +51,6 @@ export async function toggleBannerVisibility(id: string, isVisible: boolean) {
   const { error } = await supabase.from('menu_banners').update({ is_visible: isVisible }).eq('id', id);
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/banners');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }

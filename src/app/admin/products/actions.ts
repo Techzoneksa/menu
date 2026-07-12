@@ -76,7 +76,7 @@ export async function saveProduct(payload: {
 
   revalidatePath('/admin/products');
   revalidatePath('/admin');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -86,7 +86,7 @@ export async function deleteProduct(id: string) {
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/products');
   revalidatePath('/admin');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -95,7 +95,7 @@ export async function toggleProductField(id: string, field: 'is_visible' | 'is_a
   const { error } = await supabase.from('menu_products').update({ [field]: value }).eq('id', id);
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/products');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }
 
@@ -105,6 +105,6 @@ export async function duplicateProduct(id: string) {
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/products');
   revalidatePath('/admin');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data };
 }

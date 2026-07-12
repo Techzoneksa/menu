@@ -65,7 +65,7 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="flex gap-3">
-        <a href="/menu" target="_blank" className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition-shadow">
+        <a href="/" target="_blank" className="flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition-shadow">
           <ExternalLink size={16} />
           فتح المنيو
         </a>

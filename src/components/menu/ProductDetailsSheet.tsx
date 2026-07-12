@@ -52,7 +52,7 @@ export function ProductDetailsSheet({ product, onClose }: ProductDetailsSheetPro
   const additionalImages = (product.images || []).filter(img => img.is_visible).sort((a, b) => a.sort_order - b.sort_order);
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/menu?product=${product.slug}`;
+    const url = `${window.location.origin}/?product=${product.slug}`;
     try {
       await navigator.share({ title: name, url });
     } catch {

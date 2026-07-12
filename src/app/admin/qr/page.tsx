@@ -13,7 +13,7 @@ function resolveMenuUrl(settingsDomain: string | null): string {
     const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
     base = (envUrl || window.location.origin).replace(/\/+$/, '');
   }
-  return `${base}/menu`;
+  return `${base}`;
 }
 
 export default function AdminQRPage() {

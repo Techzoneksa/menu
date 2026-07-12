@@ -59,7 +59,7 @@ export function AdminSidebar({ isOpen, onClose, lang, logoUrl, cafeName }: Admin
         </nav>
 
         <div className="p-2 border-t border-gray-200 dark:border-gray-700">
-          <a href="/menu" target="_blank" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <a href="/" target="_blank" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             <ExternalLink size={18} className="opacity-60" />
             {lang === 'ar' ? 'فتح المنيو' : 'Open Menu'}
           </a>

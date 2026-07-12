@@ -28,6 +28,6 @@ export async function saveSettings(formData: Record<string, unknown>) {
   const { error } = await supabase.from('menu_settings').update(payload).eq('id', settingsId);
   if (error) return { success: false as const, error: error.message };
   revalidatePath('/admin/settings');
-  revalidatePath('/menu');
+  revalidatePath('/');
   return { success: true as const, data: undefined };
 }

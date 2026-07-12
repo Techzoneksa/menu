@@ -10,7 +10,7 @@ export default function NotFound() {
           <p className="text-gray-500 dark:text-gray-400">Page not found</p>
         </div>
         <Link
-          href="/menu"
+          href="/"
           className="inline-block px-6 py-3 rounded-xl text-white text-sm font-medium transition-opacity hover:opacity-90"
           style={{ backgroundColor: '#F26522' }}
         >
