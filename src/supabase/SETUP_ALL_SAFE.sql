@@ -404,7 +404,9 @@ VALUES
   (v_cat_hot_cold, 'white-mocha-latte', 'وايت موكا لاتيه', 'White Mocha Latte', 17, 175, 11),
   (v_cat_hot_cold, 'iced-shaken-white-mocha', 'آيس شيكن وايت موكا', 'Iced Shaken White Mocha', 18, 120, 12),
   (v_cat_hot_cold, 'saudi-latte', 'سعودي لاتيه', 'Saudi Latte', NULL, 120, 13)
-ON CONFLICT (slug) DO NOTHING;
+ON CONFLICT (slug) DO UPDATE SET
+  category_id = EXCLUDED.category_id, name_ar = EXCLUDED.name_ar, name_en = EXCLUDED.name_en,
+  price = EXCLUDED.price, calories = EXCLUDED.calories, sort_order = EXCLUDED.sort_order;
 
 INSERT INTO public.menu_products (category_id, slug, name_ar, name_en, price, calories, sort_order)
 VALUES
@@ -412,13 +414,26 @@ VALUES
   (v_cat_non_coffee, 'passion-fruit', 'باشن فروت', 'Passion Fruit', 15, 371, 2),
   (v_cat_non_coffee, 'matcha', 'ماتشا', 'Matcha', 17, 120, 3),
   (v_cat_non_coffee, 'mix-berry-mojito', 'موهيتو مكس بيري', 'Mix Berry Mojito', 15, 83, 4),
-  (v_cat_non_coffee, 'hibiscus-s', 'كركديه S', 'Hibiscus S', NULL, 105, 5)
-ON CONFLICT (slug) DO NOTHING;
+  (v_cat_non_coffee, 'hibiscus-s', 'كركديه S', 'Hibiscus S', NULL, 105, 5),
+  (v_cat_non_coffee, 'berry-boba', 'بوبا توت', 'Berry Boba', 15, NULL, 6),
+  (v_cat_non_coffee, 'matcha-with-cream', 'ماتشا بالكريمة', 'Matcha with Cream', 20, NULL, 7)
+ON CONFLICT (slug) DO UPDATE SET
+  category_id = EXCLUDED.category_id, name_ar = EXCLUDED.name_ar, name_en = EXCLUDED.name_en,
+  price = EXCLUDED.price, calories = EXCLUDED.calories, sort_order = EXCLUDED.sort_order;
+
+INSERT INTO public.menu_products (category_id, slug, name_ar, name_en, price, calories, sort_order)
+VALUES
+  (v_cat_hot_cold, 'pistachio-latte', 'بستاشيو لاتيه', 'Pistachio Latte', 17, NULL, 14)
+ON CONFLICT (slug) DO UPDATE SET
+  category_id = EXCLUDED.category_id, name_ar = EXCLUDED.name_ar, name_en = EXCLUDED.name_en,
+  price = EXCLUDED.price, calories = EXCLUDED.calories, sort_order = EXCLUDED.sort_order;
 
 INSERT INTO public.menu_products (category_id, slug, name_ar, name_en, price, calories, sort_order)
 VALUES
   (v_cat_saudi_pot, 'saudi-coffee-pot', 'دلة قهوة سعودي', 'Saudi Coffee Pot', 25, 250, 1)
-ON CONFLICT (slug) DO NOTHING;
+ON CONFLICT (slug) DO UPDATE SET
+  category_id = EXCLUDED.category_id, name_ar = EXCLUDED.name_ar, name_en = EXCLUDED.name_en,
+  price = EXCLUDED.price, calories = EXCLUDED.calories, sort_order = EXCLUDED.sort_order;
 
 INSERT INTO public.menu_products (category_id, slug, name_ar, name_en, price, calories, sort_order)
 VALUES
@@ -442,7 +457,9 @@ VALUES
   (v_cat_desserts, 'crunchy-waffle', 'وافل كرانشي', 'Crunchy Waffle', 17, 427, 18),
   (v_cat_desserts, 'pistachio-waffle', 'وافل بيستاشو', 'Pistachio Waffle', 17, 473, 19),
   (v_cat_desserts, 'mix-waffle', 'وافل مكس', 'Mix Waffle', 24, 468, 20)
-ON CONFLICT (slug) DO NOTHING;
+ON CONFLICT (slug) DO UPDATE SET
+  category_id = EXCLUDED.category_id, name_ar = EXCLUDED.name_ar, name_en = EXCLUDED.name_en,
+  price = EXCLUDED.price, calories = EXCLUDED.calories, sort_order = EXCLUDED.sort_order;
 
 SELECT id INTO v_prod_mini FROM public.menu_products WHERE slug = 'mini-pancake';
 
@@ -509,10 +526,10 @@ BEGIN
   SELECT count(*) INTO v_set FROM public.menu_settings;
   SELECT count(*) INTO v_ban FROM public.menu_banners;
 
-  RAISE NOTICE 'Verification: cats=% (expect 4), prods=% (expect 39), vars=% (expect 2), groups=% (expect 1), items=% (expect 3), links=% (expect 13), settings=% (expect 1), banners=% (expect 0)',
+  RAISE NOTICE 'Verification: cats=% (expect 4), prods=% (expect 42), vars=% (expect 2), groups=% (expect 1), items=% (expect 3), links=% (expect 13), settings=% (expect 1), banners=% (expect 0)',
     v_cats, v_prods, v_vars, v_ag, v_ai, v_al, v_set, v_ban;
 
-  IF v_cats != 4 OR v_prods != 39 OR v_vars != 2 OR v_ag != 1 OR v_ai != 3 OR v_al != 13 OR v_set < 1 THEN
+  IF v_cats != 4 OR v_prods != 42 OR v_vars != 2 OR v_ag != 1 OR v_ai != 3 OR v_al != 13 OR v_set < 1 THEN
     RAISE WARNING 'Data verification failed: categories=%, products=%, variants=%, addon_groups=%, addon_items=%, addon_links=%, settings=%',
       v_cats, v_prods, v_vars, v_ag, v_ai, v_al, v_set;
   END IF;
