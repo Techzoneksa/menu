@@ -114,7 +114,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--light-background)' }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           {logoUrl ? (
@@ -123,12 +123,12 @@ function LoginForm() {
           ) : (
             <h1 className="text-2xl font-bold" style={{ color: '#F26522' }}>{cafeName}</h1>
           )}
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-sm mt-1" style={{ color: 'var(--light-text-secondary)' }}>
             {lang === 'ar' ? 'لوحة التحكم' : 'Admin Panel'}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm space-y-4">
+        <form onSubmit={handleSubmit} className="rounded-2xl p-6 shadow-sm space-y-4" style={{ backgroundColor: 'var(--light-card)' }}>
           <div>
             <label className="block text-sm font-medium mb-1.5">
               {lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
@@ -139,7 +139,8 @@ function LoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={isLocked || loading}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none focus:ring-2 focus:ring-[#F26522] disabled:opacity-50"
+              className="w-full px-4 py-2.5 rounded-xl border bg-transparent text-sm outline-none focus:ring-2 focus:ring-[#F26522] disabled:opacity-50"
+              style={{ borderColor: 'var(--light-border)' }}
               dir="ltr"
               autoComplete="email"
             />
@@ -156,7 +157,8 @@ function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLocked || loading}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none focus:ring-2 focus:ring-[#F26522] pe-10 disabled:opacity-50"
+                className="w-full px-4 py-2.5 rounded-xl border bg-transparent text-sm outline-none focus:ring-2 focus:ring-[#F26522] pe-10 disabled:opacity-50"
+                style={{ borderColor: 'var(--light-border)' }}
                 dir="ltr"
                 autoComplete="current-password"
               />
@@ -174,7 +176,8 @@ function LoginForm() {
           <div className="text-end">
             <Link
               href="/forgot-password"
-              className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              className="text-xs transition-colors"
+              style={{ color: 'var(--light-text-secondary)' }}
             >
               {lang === 'ar' ? 'نسيت كلمة المرور؟' : 'Forgot password?'}
             </Link>
@@ -207,7 +210,7 @@ function LoginForm() {
 export default function AdminLoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--light-background)' }}>
         <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#F26522', borderTopColor: 'transparent' }} />
       </div>
     }>
