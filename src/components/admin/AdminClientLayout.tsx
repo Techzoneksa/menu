@@ -80,7 +80,7 @@ export default function AdminClientLayout({ children }: { children: React.ReactN
   return (
     <AdminThemeProvider>
       <AdminLangContext.Provider value={{ lang, toggleLang }}>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100" dir="ltr">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
           <AdminHeader
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
             onToggleLang={toggleLang}
