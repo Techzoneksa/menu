@@ -22,7 +22,7 @@ export function CategoryTabs({ categories, activeCategorySlug, onCategorySelect 
     <div
       className="sticky top-[56px] z-30"
       style={{
-        backgroundColor: isDark ? 'var(--dark-background)' : 'var(--light-background)',
+        backgroundColor: isDark ? 'var(--dark-header)' : 'var(--light-background)',
       }}
     >
       <div

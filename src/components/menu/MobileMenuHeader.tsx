@@ -38,7 +38,7 @@ export function MobileMenuHeader({
     <div
       className="sticky top-0 z-40"
       style={{
-        backgroundColor: isDark ? 'var(--dark-background)' : 'var(--light-background)',
+        backgroundColor: isDark ? 'var(--dark-header)' : 'var(--light-background)',
       }}
     >
       {/* Main header row */}
