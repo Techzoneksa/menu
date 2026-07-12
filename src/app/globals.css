@@ -3,22 +3,18 @@
 :root {
   --brand-primary: #008CA3;
   --brand-secondary: #F56A1A;
-  --light-background: #FFFDFC;
+  --light-background: #FFFDF9;
   --light-card: #FFFFFF;
-  --light-text: #151515;
-  --light-text-secondary: #737373;
-  --light-border: #F0F0F0;
-  --light-hover: #F5F5F5;
-  --dark-background: #101010;
-  --dark-card: #1B1B1B;
-  --dark-text: #F5F5F5;
-  --dark-text-secondary: #999999;
-  --dark-border: #303030;
+  --light-text: #171717;
+  --light-text-secondary: #6B7280;
+  --light-border: #E7E2DA;
+  --light-hover: #F5F2ED;
+  --dark-background: #0F0F0F;
+  --dark-card: #1A1A1A;
+  --dark-text: #F7F7F7;
+  --dark-text-secondary: #A3A3A3;
+  --dark-border: #333333;
   --dark-hover: #252525;
-  --cat-turquoise-light: #E6F5F7;
-  --cat-orange-light: #FFF0E6;
-  --cat-beige-light: #FFF8F0;
-  --cat-gray-light: #F5F5F5;
 }
 
 @theme {

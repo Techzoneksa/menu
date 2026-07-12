@@ -1,82 +1,50 @@
 "use client";
 
-import Image from "next/image";
 import { useLanguage } from "./LanguageContext";
 import { useThemeContext } from "./ThemeContext";
-import { getImageUrl } from "./getImageUrl";
-import type { MenuSettings } from "@/types/menu";
 
-interface CafeIdentityProps {
-  settings: MenuSettings;
-}
-
-export function CafeIdentity({ settings }: CafeIdentityProps) {
+export function MenuTitleCard() {
   const { lang } = useLanguage();
   const { resolvedTheme } = useThemeContext();
   const isDark = resolvedTheme === 'dark';
 
-  const cafeName = lang === 'ar'
-    ? (settings.cafe_name_ar || 'ماهر كيف')
-    : (settings.cafe_name_en || 'Maher Kaif');
-  const logoUrl = isDark && settings.white_logo_url ? settings.white_logo_url : settings.logo_url;
-  const displayUrl = getImageUrl(logoUrl, resolvedTheme);
+  const title = lang === 'ar' ? 'المنيو' : 'Menu';
 
   return (
     <div
-      className="mx-4 flex items-center gap-3"
+      className="mx-4 flex items-center"
       style={{
         marginTop: '10px',
         marginBottom: '6px',
-        padding: '12px',
+        padding: '10px 14px',
         backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
-        borderRadius: '16px',
+        borderRadius: '14px',
         border: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
       }}
     >
-      {displayUrl && (
-        <div
-          className="relative shrink-0"
-          style={{ width: '56px', height: '56px' }}
-        >
-          <Image
-            src={displayUrl}
-            alt={cafeName}
-            fill
-            sizes="56px"
-            className="object-contain"
-            unoptimized
-          />
-        </div>
-      )}
-
-      <div className="min-w-0 flex-1">
-        <h2
-          className="font-bold truncate"
-          style={{
-            fontSize: '16px',
-            lineHeight: '22px',
-            color: isDark ? 'var(--dark-text)' : 'var(--light-text)',
-          }}
-        >
-          {cafeName}
-        </h2>
-
-        {settings.description_ar && (
-          <p
-            className="truncate"
-            style={{
-              fontSize: '12px',
-              lineHeight: '16px',
-              marginTop: '2px',
-              color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
-            }}
-          >
-            {lang === 'ar'
-              ? (settings.description_ar || settings.description_en || '')
-              : (settings.description_en || settings.description_ar || '')}
-          </p>
-        )}
+      <div
+        className="flex items-center justify-center shrink-0"
+        style={{
+          width: '32px',
+          height: '32px',
+          fontSize: '16px',
+          backgroundColor: isDark ? 'var(--dark-hover)' : 'var(--light-hover)',
+          borderRadius: '8px',
+        }}
+      >
+        📋
       </div>
+      <h2
+        className="font-bold"
+        style={{
+          fontSize: '15px',
+          lineHeight: '20px',
+          marginInlineStart: '10px',
+          color: isDark ? 'var(--dark-text)' : 'var(--light-text)',
+        }}
+      >
+        {title}
+      </h2>
     </div>
   );
 }

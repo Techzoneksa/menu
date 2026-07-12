@@ -8,7 +8,7 @@ import type { MenuCategory, MenuProduct, ProductWithCategory, MenuBanner, MenuSe
 import { MenuProviders } from '@/components/menu/MenuProviders';
 import { MobileMenuHeader } from '@/components/menu/MobileMenuHeader';
 import { BannerSlider } from '@/components/menu/BannerSlider';
-import { CafeIdentity } from '@/components/menu/CafeIdentity';
+import { MenuTitleCard } from '@/components/menu/CafeIdentity';
 import { CategoryTabs } from '@/components/menu/CategoryTabs';
 import { ProductSection } from '@/components/menu/ProductSection';
 import { ProductDetailsSheet } from '@/components/menu/ProductDetailsSheet';
@@ -60,12 +60,31 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
         setCategories(categoriesRes.data || []);
 
         const rawProducts = productsRes.data || [];
-        const transformedProducts = rawProducts.map((p: any) => ({
-          ...p,
-          addon_groups: (p.addon_groups || [])
-            .map((pag: any) => pag.addon_group)
-            .filter(Boolean),
-        }));
+        const transformedProducts = rawProducts.map((p: any) => {
+          const rawAddonGroups = p.addon_groups || [];
+          const normalizedAddonGroups = rawAddonGroups
+            .map((pag: any) => {
+              const group = pag.addon_group;
+              if (!group) return null;
+              const rawItems = group.items || [];
+              const visibleItems = rawItems
+                .filter((item: any) => item.is_visible !== false)
+                .sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
+              return { ...group, items: visibleItems };
+            })
+            .filter(Boolean);
+
+          const rawVariants = p.variants || [];
+          const visibleVariants = rawVariants
+            .filter((v: any) => v.is_visible !== false)
+            .sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
+
+          return {
+            ...p,
+            variants: visibleVariants,
+            addon_groups: normalizedAddonGroups,
+          };
+        });
         setProducts(transformedProducts);
 
         setBanners(bannersRes.data || []);
@@ -214,7 +233,7 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
         <>
           <BannerSlider banners={banners} />
 
-          {settings && <CafeIdentity settings={settings} />}
+          <MenuTitleCard />
 
           <CategoryTabs
             categories={categories}
