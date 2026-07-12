@@ -29,11 +29,7 @@ export function AdminHeader({ onToggleSidebar, onToggleLang, logoUrl, cafeName }
         <button onClick={onToggleSidebar} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden">
           <Menu size={20} />
         </button>
-        {logoUrl ? (
-          <Image src={logoUrl} alt={cafeName || 'Admin'} width={32} height={32} className="h-8 w-auto object-contain hidden sm:block" unoptimized />
-        ) : (
-          <h1 className="text-sm font-bold hidden sm:block">{cafeName || 'ماهر كيف'} | Admin</h1>
-        )}
+        <Image src={logoUrl || '/logo.svg'} alt={cafeName || 'Admin'} width={32} height={32} className="h-8 w-auto object-contain hidden sm:block" unoptimized />
       </div>
       <div className="flex items-center gap-1">
         <button onClick={onToggleLang} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" title="Toggle Language">

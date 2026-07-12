@@ -18,9 +18,7 @@ export function CafeIdentity({ settings }: CafeIdentityProps) {
 
   return (
     <div className="px-4 py-6 text-center">
-      {settings.logo_url && (
-        <img src={settings.logo_url} alt={cafeName || ''} className="h-16 w-auto mx-auto mb-3 object-contain" />
-      )}
+      <img src={settings.logo_url || '/logo.svg'} alt={cafeName || ''} className="h-16 w-auto mx-auto mb-3 object-contain" />
 
       <h2 className="text-xl font-bold" style={{ color: 'var(--brand-primary)' }}>
         {cafeName || 'ماهر كيف'}

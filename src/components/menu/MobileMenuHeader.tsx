@@ -40,11 +40,7 @@ export function MobileMenuHeader({ cafeName, logoUrl, whiteLogoUrl, onSearchChan
       <header className="sticky top-0 z-40 backdrop-blur-md bg-[var(--light-card)] dark:bg-[var(--dark-card)] border-b border-[var(--light-border)] dark:border-[var(--dark-border)]" style={{ backgroundColor: resolvedTheme === 'dark' ? 'var(--dark-card)' : 'var(--light-card)' }}>
         <div className="flex items-center justify-between px-4 h-14">
           <div className="flex items-center gap-2 min-w-0">
-            {activeLogo ? (
-              <img src={activeLogo} alt={cafeName} className="h-8 w-auto object-contain" />
-            ) : (
-              <h1 className="text-lg font-bold truncate" style={{ color: 'var(--brand-primary)' }}>{cafeName}</h1>
-            )}
+            <img src={activeLogo || '/logo.svg'} alt={cafeName} className="h-8 w-auto object-contain" />
           </div>
 
           <div className="flex items-center gap-1">

@@ -34,11 +34,7 @@ export function AdminSidebar({ isOpen, onClose, lang, logoUrl, cafeName }: Admin
         }`}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          {logoUrl ? (
-            <Image src={logoUrl} alt={cafeName || 'Admin'} width={32} height={32} className="h-8 w-auto object-contain" unoptimized />
-          ) : (
-            <span className="font-bold text-sm">{cafeName || 'ماهر كيف'} | Admin</span>
-          )}
+          <Image src={logoUrl || '/logo.svg'} alt={cafeName || 'Admin'} width={32} height={32} className="h-8 w-auto object-contain" unoptimized />
           <button onClick={onClose} className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden">
             <X size={18} />
           </button>
