@@ -12,45 +12,41 @@ interface BannerSliderProps {
 
 export function BannerSlider({ banners }: BannerSliderProps) {
   const [current, setCurrent] = useState(0);
-  const touchStart = useRef(0);
-  const touchEnd = useRef(0);
+  const [paused, setPaused] = useState(false);
+  const touchStartX = useRef(0);
+  const touchDelta = useRef(0);
   const { lang } = useLanguage();
 
   const visibleBanners = banners;
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCurrent(0);
-  }, [visibleBanners.length]);
 
   const next = useCallback(() => {
     setCurrent(prev => (prev + 1) % visibleBanners.length);
   }, [visibleBanners.length]);
 
-  const prev = useCallback(() => {
-    setCurrent(prev => (prev - 1 + visibleBanners.length) % visibleBanners.length);
-  }, [visibleBanners.length]);
-
   useEffect(() => {
-    if (visibleBanners.length <= 1) return;
-    const timer = setInterval(next, 5000);
+    if (visibleBanners.length <= 1 || paused) return;
+    const timer = setInterval(next, 4500);
     return () => clearInterval(timer);
-  }, [next, visibleBanners.length]);
+  }, [next, visibleBanners.length, paused]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    touchStart.current = e.touches[0].clientX;
+    touchStartX.current = e.touches[0].clientX;
+    touchDelta.current = 0;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    touchEnd.current = e.touches[0].clientX;
+    touchDelta.current = e.touches[0].clientX - touchStartX.current;
   };
 
   const handleTouchEnd = () => {
-    const diff = touchStart.current - touchEnd.current;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) next();
-      else prev();
+    if (Math.abs(touchDelta.current) > 50) {
+      if (touchDelta.current < 0) {
+        setCurrent(prev => (prev + 1) % visibleBanners.length);
+      } else {
+        setCurrent(prev => (prev - 1 + visibleBanners.length) % visibleBanners.length);
+      }
     }
+    touchDelta.current = 0;
   };
 
   const handleBannerClick = (banner: MenuBanner) => {
@@ -68,33 +64,37 @@ export function BannerSlider({ banners }: BannerSliderProps) {
 
   const bannerContent = (
     <div
-      className="relative mx-4 mt-4 rounded-2xl overflow-hidden"
+      className="relative mx-4 mt-3 overflow-hidden"
+      style={{ borderRadius: 20, aspectRatio: '16/7' }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
     >
-      <div className="relative aspect-[16/7]">
-        <img
-          src={banner.image_url}
-          alt={title || ''}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-        {(title || description) && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-4">
-            {title && <h3 className="text-white font-bold text-lg">{title}</h3>}
-            {description && <p className="text-white/80 text-sm mt-1">{description}</p>}
-          </div>
-        )}
-      </div>
-
+      <img
+        src={banner.image_url}
+        alt={title || ''}
+        className="w-full h-full object-cover"
+        loading="eager"
+      />
+      {(title || description) && (
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-5">
+          {title && <h3 className="text-white font-bold text-lg drop-shadow">{title}</h3>}
+          {description && <p className="text-white/80 text-sm mt-0.5 drop-shadow">{description}</p>}
+        </div>
+      )}
       {visibleBanners.length > 1 && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
           {visibleBanners.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
-              className={`w-2 h-2 rounded-full transition-all ${i === current ? 'w-6 bg-white' : 'bg-white/50'}`}
+              className="h-2 rounded-full transition-all duration-300"
+              style={{
+                width: i === current ? 24 : 8,
+                backgroundColor: i === current ? '#FFFFFF' : 'rgba(255,255,255,0.5)',
+              }}
               aria-label={`Banner ${i + 1}`}
             />
           ))}

@@ -35,6 +35,7 @@ A digital QR-enabled menu for Maher Kaif coffee shop — built with Next.js, Sup
 - 🏷️ **Promotions & Offers** — Featured badges on menu items
 - 🔐 **Admin Dashboard** — Full CRUD for menu management
 - 🔑 **Role-Based Access Control** — Admin-only via `admin_users` table + `is_admin()` RPC
+- 🔄 **Password Reset** — Email-based password recovery via Supabase Auth
 - ⚡ **Server Actions** — All admin CRUD goes through server-side validation
 - 🌙 **Dark/Light Mode** — Theme support with system preference detection
 - 🔄 **Real-time Updates** — Cache revalidation on admin changes
@@ -119,7 +120,19 @@ Create `.env.local`:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+NEXT_PUBLIC_SITE_URL=https://maher.jaadsa.com
 ```
+
+**Production Note:** The `NEXT_PUBLIC_SITE_URL` must be set to `https://maher.jaadsa.com` in production. In local development, you may use `http://localhost:3000`.
+
+### Step 5b: Configure Supabase Auth URLs
+
+In **Supabase Dashboard → Authentication → URL Configuration**:
+
+| Field | Value |
+|---|---|
+| **Site URL** | `https://maher.jaadsa.com/` |
+| **Redirect URLs** | `https://maher.jaadsa.com/reset-password` |
 
 ### Step 6: Run
 

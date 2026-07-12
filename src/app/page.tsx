@@ -2,9 +2,9 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import type { MenuCategory, MenuProduct, MenuBanner, MenuSettings } from '@/types/menu';
+import type { MenuCategory, MenuProduct, ProductWithCategory, MenuBanner, MenuSettings } from '@/types/menu';
 import { MenuProviders } from '@/components/menu/MenuProviders';
 import { MobileMenuHeader } from '@/components/menu/MobileMenuHeader';
 import { BannerSlider } from '@/components/menu/BannerSlider';
@@ -17,6 +17,7 @@ import { useLanguage } from '@/components/menu/LanguageContext';
 import { useThemeContext } from '@/components/menu/ThemeContext';
 import { BackToTop } from '@/components/menu/BackToTop';
 import { normalizeSearchText } from '@/lib/search';
+import { ProductCard } from '@/components/menu/ProductCard';
 
 function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }) {
   const [categories, setCategories] = useState<MenuCategory[]>([]);
@@ -27,9 +28,8 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = useState<MenuProduct | null>(null);
-  const categoryRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const [activeCategorySlug, setActiveCategorySlug] = useState<string>('');
+  const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null);
   const { lang } = useLanguage();
   const { resolvedTheme } = useThemeContext();
 
@@ -133,9 +133,9 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
     return map;
   }, [categories, products]);
 
-  const handleCategoryClick = useCallback((categoryId: string) => {
-    setActiveCategory(categoryId);
-    const el = document.getElementById(`category-${categoryId}`);
+  const handleCategorySelect = useCallback((slug: string) => {
+    setActiveCategorySlug(slug);
+    const el = document.getElementById(`category-${slug}`);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -143,7 +143,7 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--light-background)' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: resolvedTheme === 'dark' ? 'var(--dark-background)' : 'var(--light-background)' }}>
         <div className="text-center">
           <div className="w-10 h-10 border-3 border-t-transparent rounded-full animate-spin mx-auto mb-4" style={{ borderColor: 'var(--brand-primary)', borderTopColor: 'transparent' }} />
           <p className="text-sm opacity-50">{lang === 'ar' ? 'جاري التحميل...' : 'Loading...'}</p>
@@ -168,7 +168,7 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
     : 'ماهر كيف';
 
   return (
-    <div className="min-h-screen max-w-[480px] mx-auto relative" style={{ backgroundColor: resolvedTheme === 'dark' ? 'var(--dark-background)' : 'var(--light-background)' }}>
+    <div id="top" className="min-h-screen max-w-[480px] mx-auto relative" style={{ backgroundColor: resolvedTheme === 'dark' ? 'var(--dark-background)' : 'var(--light-background)' }}>
       <MobileMenuHeader
         cafeName={cafeName}
         logoUrl={settings?.logo_url || null}
@@ -178,12 +178,30 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
         settings={settings}
       />
 
-      {searchQuery ? (
-        <MenuSearch
-          results={searchResults}
-          onProductClick={setSelectedProduct}
-          query={searchQuery}
-        />
+      {debouncedSearchQuery ? (
+        <div className="pb-8">
+          <MenuSearch
+            query={searchQuery}
+            onQueryChange={setSearchQuery}
+            resultCount={searchResults.length}
+          />
+          <div className="flex flex-col gap-2 px-4 mt-3">
+            {searchResults.map(product => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onClick={() => setSelectedProduct(product)}
+              />
+            ))}
+          </div>
+          {searchResults.length === 0 && (
+            <div className="text-center py-12 px-4">
+              <p className="text-sm" style={{ color: '#737373' }}>
+                {lang === 'ar' ? 'لا توجد نتائج' : 'No results found'}
+              </p>
+            </div>
+          )}
+        </div>
       ) : (
         <>
           <BannerSlider banners={banners} />
@@ -192,27 +210,27 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
 
           <CategoryTabs
             categories={categories}
-            activeCategory={activeCategory}
-            onCategoryClick={handleCategoryClick}
+            activeCategorySlug={activeCategorySlug}
+            onCategorySelect={handleCategorySelect}
           />
 
-          <div className="flex flex-col gap-6 pb-8">
+          <div className="flex flex-col gap-4 pb-8 mt-2">
             {categories.map(cat => (
-              <ProductSection
-                key={cat.id}
-                ref={(el) => {
-                  if (el) categoryRefs.current.set(cat.id, el);
-                }}
-                category={cat}
-                products={productsByCategory.get(cat.id) || []}
-                onProductClick={setSelectedProduct}
-              />
+              <div key={cat.id} id={`category-${cat.slug}`}>
+                <ProductSection
+                  category={cat}
+                  products={(productsByCategory.get(cat.id) || []) as ProductWithCategory[]}
+                  onProductClick={(p) => setSelectedProduct(p)}
+                />
+              </div>
             ))}
           </div>
 
           {products.length === 0 && (
             <div className="text-center py-12 px-4">
-              <p className="text-sm opacity-50">{lang === 'ar' ? 'لا توجد منتجات' : 'No products available'}</p>
+              <p className="text-sm" style={{ color: '#737373' }}>
+                {lang === 'ar' ? 'لا توجد منتجات' : 'No products available'}
+              </p>
             </div>
           )}
         </>

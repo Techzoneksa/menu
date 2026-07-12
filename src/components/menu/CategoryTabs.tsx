@@ -1,78 +1,73 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { Coffee, CupSoda, UtensilsCrossed, Cake, type LucideIcon } from 'lucide-react';
+import { useRef, useEffect } from 'react';
 import type { MenuCategory } from '@/types/menu';
 import { useLanguage } from './LanguageContext';
-
-const iconMap: Record<string, LucideIcon> = {
-  Coffee,
-  CupSoda,
-  UtensilsCrossed,
-  Cake,
-};
+import { useThemeContext } from './ThemeContext';
+import { getCategoryIcon } from './useCategoryIcon';
 
 interface CategoryTabsProps {
   categories: MenuCategory[];
-  activeCategory: string | null;
-  onCategoryClick: (categoryId: string) => void;
+  activeCategorySlug: string;
+  onCategorySelect: (slug: string) => void;
 }
 
-export function CategoryTabs({ categories, activeCategory, onCategoryClick }: CategoryTabsProps) {
-  const { lang } = useLanguage();
+export function CategoryTabs({ categories, activeCategorySlug, onCategorySelect }: CategoryTabsProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isSticky, setIsSticky] = useState(false);
+  const activeRef = useRef<HTMLButtonElement>(null);
+  const { lang } = useLanguage();
+  const { resolvedTheme } = useThemeContext();
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsSticky(!entry.isIntersecting);
-      },
-      { threshold: 1, rootMargin: '-1px 0px 0px 0px' }
-    );
-
-    const sentinel = document.getElementById('category-sentinel');
-    if (sentinel) observer.observe(sentinel);
-
-    return () => observer.disconnect();
-  }, []);
-
-  const visibleCategories = categories.filter(c => c.is_visible);
+    if (activeRef.current && scrollRef.current) {
+      const container = scrollRef.current;
+      const el = activeRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      const offset = elRect.left - containerRect.left - containerRect.width / 2 + elRect.width / 2;
+      container.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+  }, [activeCategorySlug]);
 
   return (
-    <>
-      <div id="category-sentinel" />
-      <div
-        ref={scrollRef}
-        className={`sticky top-14 z-30 bg-[var(--light-background)] dark:bg-[var(--dark-background)] transition-shadow ${
-          isSticky ? 'shadow-sm' : ''
-        }`}
-        style={{ backgroundColor: undefined }}
-      >
-        <div className="flex gap-2 px-4 py-3 overflow-x-auto no-scrollbar">
-          {visibleCategories.map((cat) => {
-            const Icon = cat.icon ? iconMap[cat.icon] : Coffee;
+    <section id="categories" className="mt-3">
+      <div className="relative">
+        <div
+          ref={scrollRef}
+          className="flex overflow-x-auto no-scrollbar gap-2.5 px-4 pb-3"
+        >
+          {categories.map(cat => {
             const name = lang === 'ar' ? cat.name_ar : cat.name_en;
-            const isActive = activeCategory === cat.id;
-
+            const isActive = cat.slug === activeCategorySlug;
+            const icon = getCategoryIcon(cat);
             return (
               <button
                 key={cat.id}
-                onClick={() => onCategoryClick(cat.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-all shrink-0 ${
-                  isActive
-                    ? 'text-white shadow-md'
-                    : 'bg-[var(--light-card)] dark:bg-[var(--dark-card)] hover:shadow-sm'
-                }`}
-                style={isActive ? { backgroundColor: 'var(--brand-primary)' } : {}}
+                ref={isActive ? activeRef : null}
+                onClick={() => onCategorySelect(cat.slug)}
+                className="flex flex-col items-center gap-1.5 shrink-0 min-w-[64px] transition-all duration-200"
               >
-                {Icon && <Icon size={16} />}
-                {name}
+                <div
+                  className="w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-200 border-2"
+                  style={{
+                    backgroundColor: isActive ? '#008CA3' : resolvedTheme === 'dark' ? '#252525' : '#F5F5F5',
+                    borderColor: isActive ? '#008CA3' : 'transparent',
+                    color: isActive ? '#FFFFFF' : '#737373',
+                  }}
+                >
+                  {icon}
+                </div>
+                <span
+                  className="text-xs font-medium text-center leading-tight whitespace-nowrap"
+                  style={{ color: isActive ? '#008CA3' : resolvedTheme === 'dark' ? '#999999' : '#737373' }}
+                >
+                  {name}
+                </span>
               </button>
             );
           })}
         </div>
       </div>
-    </>
+    </section>
   );
 }

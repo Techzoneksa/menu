@@ -1,13 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
-import { Tajawal, Inter } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
 import "./globals.css";
 
-const tajawal = Tajawal({
+const ibmPlex = IBM_Plex_Sans_Arabic({
   subsets: ['arabic', 'latin'],
-  weight: ['300', '400', '500', '700'],
+  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
-  variable: '--font-tajawal',
+  variable: '--font-ibm-plex',
 });
 
 const inter = Inter({
@@ -76,7 +76,7 @@ export default async function RootLayout({
   const dir = lang === 'en' ? 'ltr' : 'rtl';
 
   return (
-    <html lang={lang} dir={dir} suppressHydrationWarning className={`${tajawal.variable} ${inter.variable}`}>
+    <html lang={lang} dir={dir} suppressHydrationWarning className={`${ibmPlex.variable} ${inter.variable}`}>
       <body className="antialiased">
         {children}
       </body>

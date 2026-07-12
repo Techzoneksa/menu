@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Suspense } from 'react';
+import Link from 'next/link';
 
 function getInitialLang(): 'ar' | 'en' {
   if (typeof document === 'undefined') return 'ar';
@@ -168,6 +169,15 @@ function LoginForm() {
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
+          </div>
+
+          <div className="text-end">
+            <Link
+              href="/forgot-password"
+              className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+            >
+              {lang === 'ar' ? 'نسيت كلمة المرور؟' : 'Forgot password?'}
+            </Link>
           </div>
 
           {error && (

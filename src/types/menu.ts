@@ -4,6 +4,7 @@ export interface MenuCategory {
   name_ar: string;
   name_en: string;
   icon: string | null;
+  icon_emoji: string | null;
   image_url: string | null;
   sort_order: number;
   is_visible: boolean;
@@ -20,6 +21,7 @@ export interface MenuProduct {
   description_ar: string | null;
   description_en: string | null;
   price: number | null;
+  discount_price: number | null;
   calories: number | null;
   image_url: string | null;
   badge_ar: string | null;
@@ -131,3 +133,7 @@ export interface MenuSettings {
 
 export type Language = 'ar' | 'en';
 export type Theme = 'light' | 'dark' | 'system';
+
+export type ProductWithCategory = MenuProduct & {
+  category?: MenuCategory;
+};
