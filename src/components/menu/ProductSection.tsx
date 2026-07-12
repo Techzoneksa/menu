@@ -24,35 +24,45 @@ export function ProductSection({ category, products, onProductClick }: ProductSe
   if (products.length === 0) return null;
 
   return (
-    <div className="px-4">
-      {/* Category header */}
-      <div className="flex items-center gap-2.5 mb-3 mt-1">
+    <div style={{ padding: '0 16px' }}>
+      {/* Category section header */}
+      <div
+        className="flex items-center"
+        style={{
+          gap: '8px',
+          marginBottom: '10px',
+          marginTop: '4px',
+        }}
+      >
         <div
           className="flex items-center justify-center shrink-0"
           style={{
-            width: '36px',
-            height: '36px',
-            fontSize: '18px',
+            width: '28px',
+            height: '28px',
+            fontSize: '15px',
             backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
             border: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
-            borderRadius: '10px',
+            borderRadius: '8px',
           }}
         >
           {icon}
         </div>
         <h2
-          className="font-bold truncate"
+          className="font-bold truncate min-w-0"
           style={{
-            fontSize: '16px',
+            fontSize: '14px',
+            lineHeight: '20px',
             color: isDark ? 'var(--dark-text)' : 'var(--light-text)',
           }}
         >
           {catName}
         </h2>
         <span
-          className="shrink-0 rounded-full px-2 py-0.5"
+          className="shrink-0 rounded-full"
           style={{
-            fontSize: '11px',
+            padding: '1px 8px',
+            fontSize: '10px',
+            lineHeight: '18px',
             fontWeight: 500,
             backgroundColor: isDark ? 'var(--dark-hover)' : 'var(--light-hover)',
             color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
@@ -62,8 +72,8 @@ export function ProductSection({ category, products, onProductClick }: ProductSe
         </span>
       </div>
 
-      {/* Product list */}
-      <div className="flex flex-col gap-2">
+      {/* Product cards */}
+      <div className="flex flex-col" style={{ gap: '8px' }}>
         {products.map((product) => (
           <ProductCard
             key={product.id}

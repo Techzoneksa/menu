@@ -17,19 +17,21 @@ export function CategoryTabs({ categories, activeCategorySlug, onCategorySelect 
   const iconMap = useCategoryIcon(categories);
 
   const isDark = resolvedTheme === 'dark';
-  const activeBg = 'var(--brand-primary)';
-  const inactiveBg = isDark ? 'var(--dark-card)' : 'var(--light-card)';
-  const inactiveBorder = isDark ? 'var(--dark-border)' : 'var(--light-border)';
-  const textColor = isDark ? 'var(--dark-text)' : 'var(--light-text)';
 
   return (
     <div
-      className="sticky top-[56px] z-30 px-3 py-2.5"
+      className="sticky top-[56px] z-30"
       style={{
         backgroundColor: isDark ? 'var(--dark-background)' : 'var(--light-background)',
       }}
     >
-      <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+      <div
+        className="flex overflow-x-auto no-scrollbar"
+        style={{
+          padding: '10px 12px 8px',
+          gap: '6px',
+        }}
+      >
         {categories.map((cat) => {
           const isActive = cat.slug === activeCategorySlug;
           const icon = iconMap.get(cat.id) || '🍽️';
@@ -39,32 +41,42 @@ export function CategoryTabs({ categories, activeCategorySlug, onCategorySelect 
             <button
               key={cat.id}
               onClick={() => onCategorySelect(cat.slug)}
-              className="flex flex-col items-center shrink-0 transition-all duration-200"
+              className="flex flex-col items-center shrink-0"
               style={{
-                width: '74px',
-                gap: '5px',
+                width: '80px',
+                gap: '6px',
               }}
             >
+              {/* Icon circle */}
               <div
-                className="flex items-center justify-center rounded-full transition-all duration-200"
+                className="flex items-center justify-center rounded-full shrink-0"
                 style={{
-                  width: '52px',
-                  height: '52px',
-                  backgroundColor: isActive ? activeBg : inactiveBg,
-                  border: `1.5px solid ${isActive ? activeBg : inactiveBorder}`,
-                  fontSize: '22px',
+                  width: '56px',
+                  height: '56px',
+                  fontSize: '24px',
                   lineHeight: 1,
-                  color: isActive ? '#fff' : textColor,
+                  backgroundColor: isActive
+                    ? 'var(--brand-primary)'
+                    : (isDark ? 'var(--dark-card)' : 'var(--light-card)'),
+                  border: `2px solid ${isActive ? 'var(--brand-primary)' : (isDark ? 'var(--dark-border)' : 'var(--light-border)')}`,
                 }}
               >
                 {icon}
               </div>
+
+              {/* Label */}
               <span
-                className="text-center leading-tight truncate w-full"
+                className="w-full text-center"
                 style={{
                   fontSize: '11px',
+                  lineHeight: '14px',
                   fontWeight: isActive ? 600 : 400,
-                  color: isActive ? activeBg : (isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)'),
+                  color: isActive
+                    ? 'var(--brand-primary)'
+                    : (isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)'),
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
                 {label}

@@ -28,31 +28,40 @@ export function MobileMenuHeader({
   const { lang, toggleLang } = useLanguage();
   const { resolvedTheme, cycleTheme } = useThemeContext();
   const isDark = resolvedTheme === 'dark';
-
   const isArabic = lang === 'ar';
+
   const effectiveLogo = isDark && whiteLogoUrl ? whiteLogoUrl : logoUrl;
   const displayUrl = getImageUrl(effectiveLogo, resolvedTheme);
   const englishEnabled = settings?.english_enabled !== false;
 
   return (
     <div
-      className="sticky top-0 z-40 px-4 py-2.5"
+      className="sticky top-0 z-40"
       style={{
         backgroundColor: isDark ? 'var(--dark-background)' : 'var(--light-background)',
-        borderBottom: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
       }}
     >
-      {/* Top row: logo, name, actions */}
-      <div className="flex items-center gap-3" dir={isArabic ? 'rtl' : 'ltr'}>
-        {/* Logo + name */}
-        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+      {/* Main header row */}
+      <div
+        className="flex items-center justify-between"
+        style={{
+          height: '52px',
+          padding: '0 12px',
+        }}
+        dir={isArabic ? 'rtl' : 'ltr'}
+      >
+        {/* Logo + Name */}
+        <div
+          className="flex items-center min-w-0"
+          style={{ gap: '8px', flex: '1 1 0' }}
+        >
           {displayUrl && (
-            <div className="relative shrink-0" style={{ width: '36px', height: '36px' }}>
+            <div className="relative shrink-0" style={{ width: '32px', height: '32px' }}>
               <Image
                 src={displayUrl}
                 alt={cafeName}
                 fill
-                sizes="36px"
+                sizes="32px"
                 className="object-contain"
                 unoptimized
               />
@@ -61,7 +70,8 @@ export function MobileMenuHeader({
           <h1
             className="font-bold truncate"
             style={{
-              fontSize: '16px',
+              fontSize: '15px',
+              lineHeight: '20px',
               color: isDark ? 'var(--dark-text)' : 'var(--light-text)',
             }}
           >
@@ -70,16 +80,57 @@ export function MobileMenuHeader({
         </div>
 
         {/* Action buttons */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div
+          className="flex items-center shrink-0"
+          style={{ gap: '6px' }}
+        >
+          {/* Search toggle */}
+          <button
+            className="flex items-center justify-center rounded-full"
+            style={{
+              width: '34px',
+              height: '34px',
+              fontSize: '15px',
+              backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
+              border: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
+              color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
+            }}
+            aria-label="Search"
+            onClick={() => {
+              const input = document.querySelector<HTMLInputElement>('.menu-search-input');
+              input?.focus();
+            }}
+          >
+            🔍
+          </button>
+
+          {/* Theme toggle */}
+          <button
+            onClick={cycleTheme}
+            className="flex items-center justify-center rounded-full"
+            style={{
+              width: '34px',
+              height: '34px',
+              fontSize: '15px',
+              backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
+              border: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
+              color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
+            }}
+            aria-label="Toggle theme"
+          >
+            {isDark ? '☀️' : '🌙'}
+          </button>
+
+          {/* Language toggle */}
           {englishEnabled && (
             <button
               onClick={toggleLang}
-              className="flex items-center justify-center rounded-full transition-colors"
+              className="flex items-center justify-center rounded-full"
               style={{
-                width: '32px',
-                height: '32px',
+                width: '34px',
+                height: '34px',
                 fontSize: '11px',
-                fontWeight: 600,
+                fontWeight: 700,
                 backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
                 border: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
                 color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
@@ -89,36 +140,27 @@ export function MobileMenuHeader({
               {isArabic ? 'EN' : 'عر'}
             </button>
           )}
-
-          <button
-            onClick={cycleTheme}
-            className="flex items-center justify-center rounded-full transition-colors"
-            style={{
-              width: '32px',
-              height: '32px',
-              fontSize: '14px',
-              backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
-              border: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
-              color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
-            }}
-            aria-label="Toggle theme"
-          >
-            {isDark ? '☀️' : '🌙'}
-          </button>
         </div>
       </div>
 
       {/* Search bar */}
-      <div className="mt-2.5" dir={isArabic ? 'rtl' : 'ltr'}>
+      <div
+        style={{
+          padding: '0 12px 10px',
+        }}
+        dir={isArabic ? 'rtl' : 'ltr'}
+      >
         <div
-          className="flex items-center gap-2 px-3 rounded-xl transition-colors"
+          className="flex items-center rounded-xl"
           style={{
-            height: '38px',
+            height: '36px',
+            padding: '0 12px',
+            gap: '8px',
             backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
             border: `1px solid ${searchFocused ? 'var(--brand-primary)' : (isDark ? 'var(--dark-border)' : 'var(--light-border)')}`,
           }}
         >
-          <span style={{ fontSize: '14px', opacity: 0.4, direction: 'ltr' }}>🔍</span>
+          <span style={{ fontSize: '13px', opacity: 0.4 }}>🔍</span>
           <input
             type="text"
             value={searchQuery}
@@ -126,8 +168,9 @@ export function MobileMenuHeader({
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
             placeholder={isArabic ? 'ابحث عن منتج...' : 'Search products...'}
-            className="flex-1 bg-transparent outline-none text-sm"
+            className="menu-search-input flex-1 bg-transparent outline-none"
             style={{
+              fontSize: '13px',
               color: isDark ? 'var(--dark-text)' : 'var(--light-text)',
               direction: isArabic ? 'rtl' : 'ltr',
             }}
@@ -135,8 +178,15 @@ export function MobileMenuHeader({
           {searchQuery && (
             <button
               onClick={() => onSearchChange('')}
-              className="shrink-0"
-              style={{ fontSize: '14px', opacity: 0.4, color: isDark ? 'var(--dark-text)' : 'var(--light-text)' }}
+              className="shrink-0 flex items-center justify-center"
+              style={{
+                width: '18px',
+                height: '18px',
+                fontSize: '11px',
+                borderRadius: '50%',
+                backgroundColor: isDark ? 'var(--dark-hover)' : 'var(--light-hover)',
+                color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
+              }}
             >
               ✕
             </button>

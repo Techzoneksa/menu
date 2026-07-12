@@ -9,13 +9,13 @@ interface MenuSearchProps {
   resultCount: number;
 }
 
-export function MenuSearch({ query, onQueryChange, resultCount }: MenuSearchProps) {
+export function MenuSearch({ resultCount }: MenuSearchProps) {
   const { lang } = useLanguage();
   const { resolvedTheme } = useThemeContext();
   const isDark = resolvedTheme === 'dark';
 
   return (
-    <div className="px-4 pt-3 pb-1">
+    <div style={{ padding: '12px 16px 4px' }}>
       <p
         className="text-center"
         style={{

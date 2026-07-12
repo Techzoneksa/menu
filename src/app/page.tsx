@@ -32,6 +32,7 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
   const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null);
   const { lang } = useLanguage();
   const { resolvedTheme } = useThemeContext();
+  const isDark = resolvedTheme === 'dark';
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -168,7 +169,14 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
     : 'ماهر كيف';
 
   return (
-    <div id="top" className="min-h-screen max-w-[480px] mx-auto relative" style={{ backgroundColor: resolvedTheme === 'dark' ? 'var(--dark-background)' : 'var(--light-background)' }}>
+    <div
+      id="top"
+      className="min-h-screen mx-auto relative"
+      style={{
+        maxWidth: '480px',
+        backgroundColor: resolvedTheme === 'dark' ? 'var(--dark-background)' : 'var(--light-background)',
+      }}
+    >
       <MobileMenuHeader
         cafeName={cafeName}
         logoUrl={settings?.logo_url || null}
@@ -179,13 +187,13 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
       />
 
       {debouncedSearchQuery ? (
-        <div className="pb-8">
+        <div style={{ paddingBottom: '32px' }}>
           <MenuSearch
             query={searchQuery}
             onQueryChange={setSearchQuery}
             resultCount={searchResults.length}
           />
-          <div className="flex flex-col gap-2 px-4 mt-3">
+          <div className="flex flex-col" style={{ gap: '8px', padding: '12px 16px 0' }}>
             {searchResults.map(product => (
               <ProductCard
                 key={product.id}
@@ -195,8 +203,8 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
             ))}
           </div>
           {searchResults.length === 0 && (
-            <div className="text-center py-12 px-4">
-              <p className="text-sm" style={{ color: '#737373' }}>
+            <div className="text-center" style={{ padding: '48px 16px' }}>
+              <p style={{ fontSize: '13px', color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)' }}>
                 {lang === 'ar' ? 'لا توجد نتائج' : 'No results found'}
               </p>
             </div>
@@ -214,7 +222,7 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
             onCategorySelect={handleCategorySelect}
           />
 
-          <div className="flex flex-col gap-4 pb-8 mt-2">
+          <div className="flex flex-col" style={{ gap: '20px', paddingBottom: '32px', paddingTop: '4px' }}>
             {categories.map(cat => (
               <div key={cat.id} id={`category-${cat.slug}`}>
                 <ProductSection
@@ -227,8 +235,8 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
           </div>
 
           {products.length === 0 && (
-            <div className="text-center py-12 px-4">
-              <p className="text-sm" style={{ color: '#737373' }}>
+            <div className="text-center" style={{ padding: '48px 16px' }}>
+              <p style={{ fontSize: '13px', color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)' }}>
                 {lang === 'ar' ? 'لا توجد منتجات' : 'No products available'}
               </p>
             </div>
@@ -242,7 +250,6 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
       />
 
       <BackToTop />
-
     </div>
   );
 }

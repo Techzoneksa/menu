@@ -33,17 +33,21 @@ export function BannerSlider({ banners }: BannerSliderProps) {
   if (visibleBanners.length === 0) return null;
 
   return (
-    <div className="px-4 mt-2.5">
+    <div style={{ padding: '10px 16px 0' }}>
       <div
         className="relative w-full overflow-hidden"
         style={{
-          height: '180px',
-          borderRadius: '14px',
+          height: '190px',
+          borderRadius: '20px',
         }}
       >
         {visibleBanners.map((banner, idx) => {
           const imgUrl = getImageUrl(banner.image_url, resolvedTheme);
           if (!imgUrl) return null;
+
+          const altText = lang === 'ar'
+            ? (banner.title_ar || banner.description_ar || '')
+            : (banner.title_en || banner.description_en || '');
 
           return (
             <div
@@ -53,7 +57,7 @@ export function BannerSlider({ banners }: BannerSliderProps) {
             >
               <Image
                 src={imgUrl}
-                alt={lang === 'ar' ? (banner.title_ar || '') : (banner.title_en || '')}
+                alt={altText}
                 fill
                 sizes="(max-width: 480px) 100vw, 480px"
                 className="object-cover"
@@ -66,16 +70,21 @@ export function BannerSlider({ banners }: BannerSliderProps) {
       </div>
 
       {visibleBanners.length > 1 && (
-        <div className="flex justify-center gap-1.5 mt-2.5">
+        <div
+          className="flex items-center justify-center"
+          style={{ gap: '6px', marginTop: '10px' }}
+        >
           {visibleBanners.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrent(idx)}
               className="rounded-full transition-all duration-300"
               style={{
-                width: idx === current ? '20px' : '6px',
-                height: '6px',
-                backgroundColor: idx === current ? 'var(--brand-primary)' : (isDark ? 'var(--dark-border)' : '#D4D4D4'),
+                width: idx === current ? '22px' : '7px',
+                height: '7px',
+                backgroundColor: idx === current
+                  ? 'var(--brand-primary)'
+                  : (isDark ? 'var(--dark-border)' : '#D4D4D4'),
               }}
               aria-label={`Slide ${idx + 1}`}
             />

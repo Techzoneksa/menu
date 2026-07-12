@@ -23,8 +23,10 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center gap-3 p-2.5 text-start transition-colors rounded-xl"
+      className="w-full flex items-center text-start rounded-xl transition-colors"
       style={{
+        padding: '10px',
+        gap: '12px',
         backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
         border: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
       }}
@@ -33,8 +35,8 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
       <div
         className="relative shrink-0 overflow-hidden rounded-lg"
         style={{
-          width: '72px',
-          height: '72px',
+          width: '68px',
+          height: '68px',
           backgroundColor: isDark ? 'var(--dark-hover)' : 'var(--light-hover)',
         }}
       >
@@ -43,12 +45,12 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
             src={imageUrl}
             alt={name}
             fill
-            sizes="72px"
+            sizes="68px"
             className="object-cover"
             unoptimized
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-2xl opacity-30">
+          <div className="w-full h-full flex items-center justify-center text-xl opacity-20">
             🍽️
           </div>
         )}
@@ -59,7 +61,8 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
         <h3
           className="font-semibold truncate"
           style={{
-            fontSize: '14px',
+            fontSize: '13px',
+            lineHeight: '18px',
             color: isDark ? 'var(--dark-text)' : 'var(--light-text)',
           }}
         >
@@ -67,9 +70,10 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
         </h3>
         {desc && (
           <p
-            className="mt-0.5 line-clamp-2"
             style={{
-              fontSize: '12px',
+              fontSize: '11px',
+              lineHeight: '15px',
+              marginTop: '2px',
               color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -81,45 +85,57 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
           </p>
         )}
 
-        {/* Hot / Cold badges */}
-        <div className="flex items-center gap-1.5 mt-1.5">
-          {product.is_hot && (
-            <span
-              className="inline-flex items-center rounded-full px-1.5 py-0.5"
-              style={{
-                fontSize: '10px',
-                backgroundColor: '#FEE2E2',
-                color: '#DC2626',
-              }}
-            >
-              🔥 {lang === 'ar' ? 'ساخن' : 'Hot'}
-            </span>
-          )}
-          {product.is_cold && (
-            <span
-              className="inline-flex items-center rounded-full px-1.5 py-0.5"
-              style={{
-                fontSize: '10px',
-                backgroundColor: '#DBEAFE',
-                color: '#2563EB',
-              }}
-            >
-              ❄️ {lang === 'ar' ? 'بارد' : 'Cold'}
-            </span>
-          )}
-        </div>
+        {/* Badges */}
+        {(product.is_hot || product.is_cold) && (
+          <div className="flex items-center" style={{ gap: '6px', marginTop: '4px' }}>
+            {product.is_hot && (
+              <span
+                className="inline-flex items-center rounded-full"
+                style={{
+                  padding: '1px 6px',
+                  fontSize: '9px',
+                  lineHeight: '16px',
+                  fontWeight: 500,
+                  backgroundColor: '#FEE2E2',
+                  color: '#DC2626',
+                }}
+              >
+                🔥 {lang === 'ar' ? 'ساخن' : 'Hot'}
+              </span>
+            )}
+            {product.is_cold && (
+              <span
+                className="inline-flex items-center rounded-full"
+                style={{
+                  padding: '1px 6px',
+                  fontSize: '9px',
+                  lineHeight: '16px',
+                  fontWeight: 500,
+                  backgroundColor: '#DBEAFE',
+                  color: '#2563EB',
+                }}
+              >
+                ❄️ {lang === 'ar' ? 'بارد' : 'Cold'}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Arrow */}
       <span
-        className="shrink-0 text-xs"
+        className="shrink-0"
         style={{
-          color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
-          transform: lang === 'ar' ? 'scaleX(-1)' : undefined,
+          fontSize: '16px',
+          color: isDark ? 'var(--dark-border)' : '#D4D4D4',
         }}
       >
-        ›
+        {isArabic(lang) ? '‹' : '›'}
       </span>
     </button>
   );
+}
+
+function isArabic(lang: string) {
+  return lang === 'ar';
 }

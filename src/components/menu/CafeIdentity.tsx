@@ -15,55 +15,65 @@ export function CafeIdentity({ settings }: CafeIdentityProps) {
   const { resolvedTheme } = useThemeContext();
   const isDark = resolvedTheme === 'dark';
 
-  const cafeName = lang === 'ar' ? (settings.cafe_name_ar || 'ماهر كيف') : (settings.cafe_name_en || ' Maher Kaif');
-  const logoUrl = isDark && settings.white_logo_url
-    ? settings.white_logo_url
-    : settings.logo_url;
+  const cafeName = lang === 'ar'
+    ? (settings.cafe_name_ar || 'ماهر كيف')
+    : (settings.cafe_name_en || 'Maher Kaif');
+  const logoUrl = isDark && settings.white_logo_url ? settings.white_logo_url : settings.logo_url;
   const displayUrl = getImageUrl(logoUrl, resolvedTheme);
 
   return (
     <div
-      className="mx-4 my-2.5 p-4 flex items-center gap-4"
+      className="mx-4 flex items-center gap-3"
       style={{
+        marginTop: '10px',
+        marginBottom: '6px',
+        padding: '12px',
         backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
-        borderRadius: '14px',
+        borderRadius: '16px',
         border: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
       }}
     >
       {displayUrl && (
         <div
           className="relative shrink-0"
-          style={{ width: '64px', height: '64px' }}
+          style={{ width: '56px', height: '56px' }}
         >
           <Image
             src={displayUrl}
             alt={cafeName}
             fill
-            sizes="64px"
+            sizes="56px"
             className="object-contain"
             unoptimized
           />
         </div>
       )}
+
       <div className="min-w-0 flex-1">
         <h2
           className="font-bold truncate"
           style={{
-            fontSize: '17px',
+            fontSize: '16px',
+            lineHeight: '22px',
             color: isDark ? 'var(--dark-text)' : 'var(--light-text)',
           }}
         >
           {cafeName}
         </h2>
+
         {settings.description_ar && (
           <p
-            className="truncate mt-0.5"
+            className="truncate"
             style={{
               fontSize: '12px',
+              lineHeight: '16px',
+              marginTop: '2px',
               color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
             }}
           >
-            {lang === 'ar' ? (settings.description_ar || settings.description_en) : (settings.description_en || settings.description_ar)}
+            {lang === 'ar'
+              ? (settings.description_ar || settings.description_en || '')
+              : (settings.description_en || settings.description_ar || '')}
           </p>
         )}
       </div>
