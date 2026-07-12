@@ -18,8 +18,44 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ماهر كيف | Maher Kaif",
-  description: "Digital Menu - Maher Kaif Coffee",
+  title: {
+    default: "ماهر كيف | منيو القهوة والحلويات",
+    template: "%s | ماهر كيف",
+  },
+  description: "اكتشف منيو ماهر كيف واستعرض تشكيلة القهوة الساخنة والباردة والحلويات والإضافات والأسعار بسهولة عبر الجوال.",
+  metadataBase: new URL("https://maher.jaadsa.com"),
+  alternates: {
+    canonical: "https://maher.jaadsa.com",
+  },
+  icons: {
+    icon: "/logo.svg",
+  },
+  openGraph: {
+    type: "website",
+    locale: "ar_SA",
+    url: "https://maher.jaadsa.com",
+    siteName: "ماهر كيف",
+    title: "ماهر كيف | منيو القهوة والحلويات",
+    description: "اكتشف منيو ماهر كيف واستعرض تشكيلة القهوة الساخنة والباردة والحلويات والإضافات والأسعار بسهولة عبر الجوال.",
+    images: [
+      {
+        url: "/logo.svg",
+        width: 600,
+        height: 200,
+        alt: "ماهر كيف",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ماهر كيف | منيو القهوة والحلويات",
+    description: "اكتشف منيو ماهر كيف واستعرض تشكيلة القهوة الساخنة والباردة والحلويات والإضافات والأسعار بسهولة عبر الجوال.",
+    images: ["/logo.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export const viewport: Viewport = {
