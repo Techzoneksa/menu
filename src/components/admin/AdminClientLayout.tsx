@@ -20,10 +20,16 @@ export function useAdminLang() {
   return useContext(AdminLangContext);
 }
 
+export type AdminProfile = {
+  display_name: string | null;
+  role: string | null;
+};
+
 export default function AdminClientLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [lang, setLang] = useState<'ar' | 'en'>('ar');
   const [settings, setSettings] = useState<{ logo_url?: string | null; cafe_name_ar?: string | null; cafe_name_en?: string | null } | null>(null);
+  const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -38,17 +44,23 @@ export default function AdminClientLayout({ children }: { children: React.ReactN
   }, [pathname]);
 
   useEffect(() => {
-    const fetchSettings = async () => {
+    const fetchData = async () => {
       try {
         const { createClient } = await import('@/lib/supabase/client');
         const supabase = createClient();
-        const { data } = await supabase.from('menu_settings').select('logo_url, cafe_name_ar, cafe_name_en').limit(1).single();
-        setSettings(data);
+        const [settingsRes, profileRes] = await Promise.all([
+          supabase.from('menu_settings').select('logo_url, cafe_name_ar, cafe_name_en').limit(1).single(),
+          supabase.rpc('get_admin_profile'),
+        ]);
+        if (settingsRes.data) setSettings(settingsRes.data);
+        if (profileRes.data && profileRes.data.length > 0) {
+          setAdminProfile(profileRes.data[0]);
+        }
       } catch {
         // ignore
       }
     };
-    fetchSettings();
+    fetchData();
   }, []);
 
   const toggleLang = () => {
@@ -74,8 +86,10 @@ export default function AdminClientLayout({ children }: { children: React.ReactN
             onToggleLang={toggleLang}
             logoUrl={settings?.logo_url || null}
             cafeName={lang === 'ar' ? (settings?.cafe_name_ar || 'ماهر كيف') : (settings?.cafe_name_en || 'Maher Kaif')}
+            adminProfile={adminProfile}
+            lang={lang}
           />
-          <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} lang={lang} logoUrl={settings?.logo_url || null} cafeName={lang === 'ar' ? (settings?.cafe_name_ar || 'ماهر كيف') : (settings?.cafe_name_en || 'Maher Kaif')} />
+          <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} lang={lang} logoUrl={settings?.logo_url || null} cafeName={lang === 'ar' ? (settings?.cafe_name_ar || 'ماهر كيف') : (settings?.cafe_name_en || 'Maher Kaif')} adminProfile={adminProfile} />
 
           <main className="lg:ms-64 p-4 sm:p-6">
             {children}

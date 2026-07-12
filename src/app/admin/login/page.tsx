@@ -1,10 +1,16 @@
 "use client";
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Suspense } from 'react';
+
+function getInitialLang(): 'ar' | 'en' {
+  if (typeof document === 'undefined') return 'ar';
+  const match = document.cookie.match(/maher-kaif-lang=(ar|en)/);
+  return match ? (match[1] as 'ar' | 'en') : 'ar';
+}
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -12,10 +18,42 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [lockoutEnd, setLockoutEnd] = useState<number>(0);
   const [attemptCount, setAttemptCount] = useState(0);
+  const [lang] = useState<'ar' | 'en'>(getInitialLang);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [cafeName, setCafeName] = useState('ماهر كيف');
+  const [lockoutDeadline, setLockoutDeadline] = useState(0);
+  const [lockoutRemaining, setLockoutRemaining] = useState(0);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const isLocked = lockoutRemaining > 0;
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.from('menu_settings').select('logo_url, cafe_name_ar, cafe_name_en').limit(1).single().then(({ data }) => {
+      if (data) {
+        setLogoUrl(data.logo_url || null);
+        setCafeName(lang === 'ar' ? (data.cafe_name_ar || 'ماهر كيف') : (data.cafe_name_en || 'Maher Kaif'));
+      }
+    });
+  }, [lang]);
+
+  useEffect(() => {
+    if (lockoutDeadline <= 0) return;
+
+    const update = () => {
+      const left = Math.max(0, lockoutDeadline - Date.now());
+      setLockoutRemaining(left);
+      return left;
+    };
+
+    if (update() <= 0) return;
+    const timer = setInterval(() => {
+      if (update() <= 0) clearInterval(timer);
+    }, 200);
+    return () => clearInterval(timer);
+  }, [lockoutDeadline]);
 
   const getDelay = useCallback((attempts: number) => {
     if (attempts < 3) return 0;
@@ -26,61 +64,80 @@ function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const now = Date.now();
-    if (now < lockoutEnd) return;
+    if (lockoutRemaining > 0) return;
 
     setLoading(true);
     setError(null);
 
-    const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const supabase = createClient();
+      const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (authError) {
-      const newCount = attemptCount + 1;
-      setAttemptCount(newCount);
-      const delay = getDelay(newCount);
-      if (delay > 0) {
-        setLockoutEnd(Date.now() + delay);
+      if (authError) {
+        const newCount = attemptCount + 1;
+        setAttemptCount(newCount);
+        const delay = getDelay(newCount);
+        if (delay > 0) setLockoutDeadline(Date.now() + delay);
+        setError(lang === 'ar' ? 'تعذر تسجيل الدخول. تحقق من البريد الإلكتروني وكلمة المرور.' : 'Unable to sign in. Check your email address and password.');
+        setLoading(false);
+        return;
       }
-      setError('البريد الإلكتروني أو كلمة المرور غير صحيحة');
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError(lang === 'ar' ? 'تعذر تسجيل الدخول. تحقق من البريد الإلكتروني وكلمة المرور.' : 'Unable to sign in. Check your email address and password.');
+        setLoading(false);
+        return;
+      }
+
+      const { data: adminCheck } = await supabase.rpc('is_admin');
+      if (!adminCheck) {
+        await supabase.auth.signOut();
+        setError(lang === 'ar' ? 'ليس لديك صلاحية الوصول إلى لوحة التحكم.' : 'You do not have permission to access the admin panel.');
+        setLoading(false);
+        return;
+      }
+
+      setAttemptCount(0);
+      const next = searchParams.get('next');
+      if (next && next.startsWith('/admin') && !next.includes('://')) {
+        router.push(next);
+      } else {
+        router.push('/admin');
+      }
+      router.refresh();
+    } catch {
+      setError(lang === 'ar' ? 'تعذر تسجيل الدخول. تحقق من البريد الإلكتروني وكلمة المرور.' : 'Unable to sign in. Check your email address and password.');
       setLoading(false);
-      return;
     }
-
-    setAttemptCount(0);
-    const next = searchParams.get('next');
-    if (next && next.startsWith('/admin') && !next.includes('://')) {
-      router.push(next);
-    } else {
-      router.push('/admin');
-    }
-    router.refresh();
   };
-
-  // eslint-disable-next-line react-hooks/purity
-  const isLocked = Date.now() < lockoutEnd;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold">ماهر كيف</h1>
-          <p className="text-sm text-gray-500 mt-1">Admin Panel</p>
+          {logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logoUrl} alt={cafeName} className="h-14 w-auto mx-auto mb-3 object-contain" />
+          ) : (
+            <h1 className="text-2xl font-bold" style={{ color: '#F26522' }}>{cafeName}</h1>
+          )}
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {lang === 'ar' ? 'لوحة التحكم' : 'Admin Panel'}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1.5">البريد الإلكتروني</label>
+            <label className="block text-sm font-medium mb-1.5">
+              {lang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
+            </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              disabled={isLocked}
+              disabled={isLocked || loading}
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none focus:ring-2 focus:ring-[#F26522] disabled:opacity-50"
               dir="ltr"
               autoComplete="email"
@@ -88,14 +145,16 @@ function LoginForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1.5">كلمة المرور</label>
+            <label className="block text-sm font-medium mb-1.5">
+              {lang === 'ar' ? 'كلمة المرور' : 'Password'}
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                disabled={isLocked}
+                disabled={isLocked || loading}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none focus:ring-2 focus:ring-[#F26522] pe-10 disabled:opacity-50"
                 dir="ltr"
                 autoComplete="current-password"
@@ -103,7 +162,8 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute end-3 top-1/2 -translate-y-1/2 opacity-50"
+                className="absolute end-3 top-1/2 -translate-y-1/2 opacity-50 hover:opacity-100 transition-opacity"
+                tabIndex={-1}
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -120,14 +180,15 @@ function LoginForm() {
             className="w-full py-2.5 rounded-xl text-white font-medium text-sm flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
             style={{ backgroundColor: '#F26522' }}
           >
-            {loading ? <Loader2 size={18} className="animate-spin" /> : null}
-            {isLocked ? 'يرجى الانتظار...' : loading ? 'جاري الدخول...' : 'تسجيل الدخول'}
+            {loading && <Loader2 size={18} className="animate-spin" />}
+            {isLocked
+              ? (lang === 'ar' ? 'يرجى الانتظار...' : 'Please wait...')
+              : loading
+                ? (lang === 'ar' ? 'جاري الدخول...' : 'Signing in...')
+                : (lang === 'ar' ? 'تسجيل الدخول' : 'Sign In')
+            }
           </button>
         </form>
-
-        <p className="text-center text-xs text-gray-400 mt-4">
-          أنشئ حساب المدير من Supabase Dashboard
-        </p>
       </div>
     </div>
   );

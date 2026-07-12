@@ -5,6 +5,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 export type AdminUser = {
   supabase: SupabaseClient;
   userId: string;
+  displayName: string | null;
+  role: string | null;
 };
 
 export async function requireAdmin(): Promise<AdminUser> {
@@ -22,5 +24,10 @@ export async function requireAdmin(): Promise<AdminUser> {
     redirect('/admin/login');
   }
 
-  return { supabase, userId: user.id };
+  const { data: profile } = await supabase.rpc('get_admin_profile');
+
+  const displayName = profile && profile.length > 0 ? profile[0].display_name : null;
+  const role = profile && profile.length > 0 ? profile[0].role : null;
+
+  return { supabase, userId: user.id, displayName, role };
 }

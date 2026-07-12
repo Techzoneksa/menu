@@ -122,6 +122,8 @@ CREATE TABLE IF NOT EXISTS public.menu_settings (
 
 CREATE TABLE IF NOT EXISTS public.admin_users (
   user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  display_name text DEFAULT 'المدير',
+  role text DEFAULT 'admin' CHECK (role IN ('super_admin','admin')),
   created_at timestamptz DEFAULT now(),
   created_by uuid REFERENCES auth.users(id) ON DELETE SET NULL
 );
@@ -134,6 +136,22 @@ $$;
 
 REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.is_super_admin()
+RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT EXISTS (SELECT 1 FROM public.admin_users WHERE user_id = auth.uid() AND role = 'super_admin');
+$$;
+
+REVOKE ALL ON FUNCTION public.is_super_admin() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.is_super_admin() TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.get_admin_profile()
+RETURNS TABLE(display_name text, role text) LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT au.display_name, au.role FROM public.admin_users au WHERE au.user_id = auth.uid();
+$$;
+
+REVOKE ALL ON FUNCTION public.get_admin_profile() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.get_admin_profile() TO authenticated;
 
 -- 4. Foreign keys (add if missing)
 DO $$ BEGIN

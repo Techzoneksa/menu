@@ -112,18 +112,7 @@ In Supabase SQL Editor, run in order:
 
 Run `src/supabase/seed.sql` in SQL Editor.
 
-### Step 5: Create Admin User
-
-1. Go to **Authentication → Users → Add user**
-2. Create user with email/password (enable Auto Confirm)
-3. Run this SQL to grant admin role:
-
-```sql
-INSERT INTO public.admin_users (user_id)
-SELECT id FROM auth.users WHERE email = 'admin@maherkaif.com';
-```
-
-### Step 6: Configure Environment
+### Step 5: Configure Environment
 
 Create `.env.local`:
 
@@ -132,7 +121,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
-### Step 7: Run
+### Step 6: Run
 
 ```bash
 npm run dev
@@ -140,11 +129,44 @@ npm run dev
 
 ---
 
+## إنشاء أول مستخدم مدير
+## Create the First Admin User
+
+After setting up the database and environment variables, create the first admin user:
+
+### 1. Create user in Supabase Authentication
+
+1. Go to **Supabase Dashboard → Authentication → Users → Add user**
+2. Enter email and password
+3. Enable **Auto Confirm**
+4. Click **Create User**
+
+### 2. Grant admin role
+
+Run this SQL in **SQL Editor** (replace the email with your admin email):
+
+```sql
+INSERT INTO public.admin_users (user_id)
+SELECT id FROM auth.users WHERE email = 'admin@maherkaif.com';
+```
+
+### 3. Verify
+
+```sql
+SELECT au.user_id, u.email
+FROM public.admin_users au
+JOIN auth.users u ON u.id = au.user_id;
+```
+
+You should see your admin email listed. Now you can sign in at `/admin/login`.
+
+---
+
 ## Routes
 
 | Route | Description | Access |
 |---|---|---|
-| `/menu` | Public menu with categories | Public |
+| `/` | Public menu (homepage) | Public |
 | `/admin/login` | Admin login | Public |
 | `/admin` | Admin dashboard | Admin Only |
 | `/admin/categories` | Manage categories | Admin Only |
@@ -176,10 +198,9 @@ maher-kaif/
 │   ├── app/
 │   │   ├── layout.tsx              # Root layout (SSR lang/dir, next/font)
 │   │   ├── globals.css             # Tailwind + font CSS variables
-│   │   ├── menu/
-│   │   │   ├── page.tsx            # Main menu page
-│   │   │   ├── loading.tsx         # Loading state
-│   │   │   └── error.tsx           # Error state with retry
+│   │   ├── page.tsx              # Main menu (homepage)
+│   │   ├── loading.tsx           # Loading state
+│   │   ├── error.tsx             # Error state with retry
 │   │   └── admin/
 │   │       ├── layout.tsx          # Admin server layout
 │   │       ├── page.tsx            # Dashboard
