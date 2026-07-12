@@ -23,6 +23,7 @@ export function useAdminLang() {
 export default function AdminClientLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [lang, setLang] = useState<'ar' | 'en'>('ar');
+  const [settings, setSettings] = useState<{ logo_url?: string | null; cafe_name_ar?: string | null; cafe_name_en?: string | null } | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -35,6 +36,20 @@ export default function AdminClientLayout({ children }: { children: React.ReactN
     // eslint-disable-next-line react-hooks/set-state-in-effect -- Close sidebar on route change
     setSidebarOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const { createClient } = await import('@/lib/supabase/client');
+        const supabase = createClient();
+        const { data } = await supabase.from('menu_settings').select('logo_url, cafe_name_ar, cafe_name_en').limit(1).single();
+        setSettings(data);
+      } catch {
+        // ignore
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const toggleLang = () => {
     const newLang = lang === 'ar' ? 'en' : 'ar';
@@ -57,8 +72,10 @@ export default function AdminClientLayout({ children }: { children: React.ReactN
           <AdminHeader
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
             onToggleLang={toggleLang}
+            logoUrl={settings?.logo_url || null}
+            cafeName={lang === 'ar' ? (settings?.cafe_name_ar || 'ماهر كيف') : (settings?.cafe_name_en || 'Maher Kaif')}
           />
-          <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} lang={lang} />
+          <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} lang={lang} logoUrl={settings?.logo_url || null} cafeName={lang === 'ar' ? (settings?.cafe_name_ar || 'ماهر كيف') : (settings?.cafe_name_en || 'Maher Kaif')} />
 
           <main className="lg:ms-64 p-4 sm:p-6">
             {children}

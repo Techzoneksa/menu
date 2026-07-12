@@ -47,7 +47,7 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
 
         const [categoriesRes, productsRes, bannersRes, settingsRes] = await Promise.all([
           supabase.from('menu_categories').select('*').eq('is_visible', true).order('sort_order'),
-          supabase.from('menu_products').select('*, category:menu_categories(*), variants:product_variants(*), addon_groups:product_addon_groups(*, addon_group:addon_groups(*, items:addon_items(*)))').eq('is_visible', true).order('sort_order'),
+          supabase.from('menu_products').select('*, category:menu_categories(*), variants:product_variants(*), addon_groups:product_addon_groups(*, addon_group:addon_groups(*, items:addon_items(*))), images:product_images(*)').eq('is_visible', true).order('sort_order'),
           supabase.from('menu_banners').select('*').order('sort_order'),
           supabase.from('menu_settings').select('*').limit(1).single(),
         ]);

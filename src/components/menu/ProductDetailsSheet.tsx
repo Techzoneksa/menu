@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { X, Share2 } from 'lucide-react';
 import type { MenuProduct } from '@/types/menu';
 import { useLanguage } from './LanguageContext';
@@ -19,6 +19,7 @@ export function ProductDetailsSheet({ product, onClose }: ProductDetailsSheetPro
   const { resolvedTheme } = useThemeContext();
   const sheetRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<{ src: string; alt: string } | null>(null);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') onClose();
@@ -85,8 +86,9 @@ export function ProductDetailsSheet({ product, onClose }: ProductDetailsSheetPro
             <img
               src={product.image_url}
               alt={name}
-              className="w-full h-56 object-cover rounded-2xl"
+              className="w-full h-56 object-cover rounded-2xl cursor-pointer hover:opacity-90 transition-opacity"
               loading="lazy"
+              onClick={() => setLightboxImage({ src: product.image_url!, alt: name })}
             />
           </div>
         )}
@@ -127,8 +129,9 @@ export function ProductDetailsSheet({ product, onClose }: ProductDetailsSheetPro
                     key={img.id}
                     src={img.image_url}
                     alt={(lang === 'ar' ? img.alt_ar : img.alt_en) || name}
-                    className="h-24 w-24 object-cover rounded-xl shrink-0"
+                    className="h-24 w-24 object-cover rounded-xl shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                     loading="lazy"
+                    onClick={() => setLightboxImage({ src: img.image_url, alt: (lang === 'ar' ? img.alt_ar : img.alt_en) || name })}
                   />
                 ))}
               </div>
@@ -188,6 +191,23 @@ export function ProductDetailsSheet({ product, onClose }: ProductDetailsSheetPro
         </div>
       </div>
 
+      {lightboxImage && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90" onClick={() => setLightboxImage(null)}>
+          <button
+            onClick={() => setLightboxImage(null)}
+            className="absolute top-4 end-4 text-white p-2"
+            aria-label="Close lightbox"
+          >
+            <X size={24} />
+          </button>
+          <img
+            src={lightboxImage.src}
+            alt={lightboxImage.alt}
+            className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }

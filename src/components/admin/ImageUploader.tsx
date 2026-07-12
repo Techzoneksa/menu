@@ -1,7 +1,5 @@
 "use client";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /* eslint-disable @next/next/no-img-element */
 
 import { useState, useRef } from 'react';
@@ -16,11 +14,37 @@ interface ImageUploaderProps {
   label?: string;
 }
 
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const BLOCKED_EXTENSIONS = ['svg', 'exe', 'bat', 'cmd', 'com', 'msi', 'scr', 'pif', 'vbs', 'js', 'sh', 'php', 'asp', 'aspx', 'jsp'];
+const MAX_SIZE = 5 * 1024 * 1024;
+
 function extractStoragePath(url: string, bucket: string): string | null {
   const marker = `/object/public/${bucket}/`;
   const idx = url.indexOf(marker);
   if (idx === -1) return null;
   return url.substring(idx + marker.length);
+}
+
+function validateFile(file: File): string | null {
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    return 'نوع الملف غير مدعوم. استخدم JPG، PNG، WebP فقط.';
+  }
+
+  const ext = file.name.split('.').pop()?.toLowerCase() || '';
+  if (BLOCKED_EXTENSIONS.includes(ext)) {
+    return 'امتداد الملف محظور.';
+  }
+
+  if (file.size > MAX_SIZE) {
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+    return `الملف كبير جداً (${sizeMB}MB). الحد الأقصى هو 5MB.`;
+  }
+
+  if (file.size === 0) {
+    return 'الملف فارغ. اختر ملفاً آخر.';
+  }
+
+  return null;
 }
 
 export function ImageUploader({ bucket, currentUrl, onUpload, onRemove, label }: ImageUploaderProps) {
@@ -33,21 +57,9 @@ export function ImageUploader({ bucket, currentUrl, onUpload, onRemove, label }:
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
-      setError('نوع الملف غير مدعوم. استخدم JPG، PNG، WebP أو GIF فقط.');
-      return;
-    }
-
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-      setError(`الملف كبير جداً (${sizeMB}MB). الحد الأقصى هو 5MB.`);
-      return;
-    }
-
-    if (file.size === 0) {
-      setError('الملف فارغ. اختر ملفاً آخر.');
+    const validationError = validateFile(file);
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -57,6 +69,24 @@ export function ImageUploader({ bucket, currentUrl, onUpload, onRemove, label }:
 
     try {
       const supabase = createClient();
+      const ext = file.name.split('.').pop() || 'jpg';
+      const path = `${crypto.randomUUID()}.${ext}`;
+
+      setProgress(30);
+
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(path, file, { upsert: false });
+
+      if (uploadError) throw uploadError;
+
+      setProgress(60);
+
+      const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(path);
+
+      setProgress(80);
+
+      onUpload(publicUrl);
 
       if (currentUrl) {
         const oldPath = extractStoragePath(currentUrl, bucket);
@@ -65,26 +95,10 @@ export function ImageUploader({ bucket, currentUrl, onUpload, onRemove, label }:
         }
       }
 
-      setProgress(30);
-
-      const ext = file.name.split('.').pop() || 'jpg';
-      const path = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
-
-      setProgress(50);
-
-      const { error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(path, file, { upsert: false });
-
-      if (uploadError) throw uploadError;
-
-      setProgress(90);
-
-      const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(path);
       setProgress(100);
-      onUpload(publicUrl);
-    } catch (err: any) {
-      setError(err.message || 'فشل الرفع. حاول مرة أخرى.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'فشل الرفع. حاول مرة أخرى.';
+      setError(message);
     } finally {
       setUploading(false);
       setTimeout(() => setProgress(0), 500);
@@ -137,7 +151,7 @@ export function ImageUploader({ bucket, currentUrl, onUpload, onRemove, label }:
         </div>
       )}
 
-      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={handleUpload} className="hidden" />
+      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleUpload} className="hidden" />
 
       {error && (
         <p className="text-xs text-red-500 flex items-center gap-1">

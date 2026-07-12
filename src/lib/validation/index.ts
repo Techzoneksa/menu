@@ -110,6 +110,10 @@ export const settingsSchema = z.object({
   english_enabled: z.boolean().default(true),
   default_theme: z.enum(['light', 'dark', 'system']).default('system'),
   menu_domain: safeUrl,
+  qr_color: hexColor,
+  qr_bg: hexColor,
+  qr_text_ar: safeTextNullable,
+  qr_text_en: safeTextNullable,
 });
 
 export const loginSchema = z.object({

@@ -1,11 +1,14 @@
 "use client";
 
-import { LayoutDashboard, FolderTree, Package, Puzzle, Image, Settings, QrCode, ExternalLink, X, Activity } from 'lucide-react';
+import { LayoutDashboard, FolderTree, Package, Puzzle, Settings, QrCode, ExternalLink, X, Activity, ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 
 interface AdminSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   lang: 'ar' | 'en';
+  logoUrl?: string | null;
+  cafeName?: string;
 }
 
 const navItems = [
@@ -13,13 +16,13 @@ const navItems = [
   { href: '/admin/categories', icon: FolderTree, labelAr: 'الفئات', labelEn: 'Categories' },
   { href: '/admin/products', icon: Package, labelAr: 'المنتجات', labelEn: 'Products' },
   { href: '/admin/addons', icon: Puzzle, labelAr: 'الإضافات', labelEn: 'Add-ons' },
-  { href: '/admin/banners', icon: Image, labelAr: 'البنرات', labelEn: 'Banners' },
+  { href: '/admin/banners', icon: ImageIcon, labelAr: 'البنرات', labelEn: 'Banners' },
   { href: '/admin/settings', icon: Settings, labelAr: 'الإعدادات', labelEn: 'Settings' },
   { href: '/admin/qr', icon: QrCode, labelAr: 'رمز QR', labelEn: 'QR Code' },
   { href: '/admin/system-check', icon: Activity, labelAr: 'فحص النظام', labelEn: 'System Check' },
 ];
 
-export function AdminSidebar({ isOpen, onClose, lang }: AdminSidebarProps) {
+export function AdminSidebar({ isOpen, onClose, lang, logoUrl, cafeName }: AdminSidebarProps) {
   return (
     <>
       {/* Mobile overlay */}
@@ -31,7 +34,11 @@ export function AdminSidebar({ isOpen, onClose, lang }: AdminSidebarProps) {
         }`}
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <span className="font-bold text-sm">ماهر كيف | Admin</span>
+          {logoUrl ? (
+            <Image src={logoUrl} alt={cafeName || 'Admin'} width={32} height={32} className="h-8 w-auto object-contain" unoptimized />
+          ) : (
+            <span className="font-bold text-sm">{cafeName || 'ماهر كيف'} | Admin</span>
+          )}
           <button onClick={onClose} className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden">
             <X size={18} />
           </button>

@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchProducts, saveProduct, deleteProduct, toggleProductField, duplicateProduct } from './actions';
 import type { MenuCategory, MenuProduct, AddonGroup } from '@/types/menu';
-import { Plus, Pencil, Trash2, Eye, EyeOff, Copy, Search, Loader2, GripVertical } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye, EyeOff, Copy, Search, Loader2, GripVertical, Images } from 'lucide-react';
 import { normalizeSearchText } from '@/lib/search';
+import Link from 'next/link';
 import { DeleteDialog } from '@/components/admin/DeleteDialog';
 import { ImageUploader } from '@/components/admin/ImageUploader';
 
@@ -213,6 +214,7 @@ export default function AdminProductsPage() {
               </button>
               <button onClick={() => openEdit(p)} className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700"><Pencil size={16} /></button>
               <button onClick={() => handleCopy(p)} className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700"><Copy size={16} /></button>
+              <Link href={`/admin/products/images?product_id=${p.id}`} className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700"><Images size={16} /></Link>
               <button onClick={() => setDeleteTarget(p)} className="p-1.5 rounded hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500"><Trash2 size={16} /></button>
             </div>
           </div>

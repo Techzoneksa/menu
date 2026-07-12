@@ -4,13 +4,16 @@ import { Menu, Sun, Moon, Globe, LogOut } from 'lucide-react';
 import { useAdminTheme } from './AdminThemeContext';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface AdminHeaderProps {
   onToggleSidebar: () => void;
   onToggleLang: () => void;
+  logoUrl?: string | null;
+  cafeName?: string;
 }
 
-export function AdminHeader({ onToggleSidebar, onToggleLang }: AdminHeaderProps) {
+export function AdminHeader({ onToggleSidebar, onToggleLang, logoUrl, cafeName }: AdminHeaderProps) {
   const { resolvedTheme, cycleTheme } = useAdminTheme();
   const router = useRouter();
   const supabase = createClient();
@@ -26,7 +29,11 @@ export function AdminHeader({ onToggleSidebar, onToggleLang }: AdminHeaderProps)
         <button onClick={onToggleSidebar} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden">
           <Menu size={20} />
         </button>
-        <h1 className="text-sm font-bold hidden sm:block">لوحة التحكم | Admin</h1>
+        {logoUrl ? (
+          <Image src={logoUrl} alt={cafeName || 'Admin'} width={32} height={32} className="h-8 w-auto object-contain hidden sm:block" unoptimized />
+        ) : (
+          <h1 className="text-sm font-bold hidden sm:block">{cafeName || 'ماهر كيف'} | Admin</h1>
+        )}
       </div>
       <div className="flex items-center gap-1">
         <button onClick={onToggleLang} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" title="Toggle Language">

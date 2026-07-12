@@ -122,6 +122,10 @@ export interface MenuSettings {
   english_enabled: boolean;
   default_theme: string;
   menu_domain: string | null;
+  qr_color: string | null;
+  qr_bg: string | null;
+  qr_text_ar: string | null;
+  qr_text_en: string | null;
   updated_at: string;
 }
 

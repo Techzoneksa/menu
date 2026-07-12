@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Hostinger custom server (CJS, not part of Next.js app)
+    "server.js",
   ]),
 ]);
 
