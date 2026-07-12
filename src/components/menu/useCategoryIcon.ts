@@ -1,35 +1,54 @@
+import { useMemo } from 'react';
 import type { MenuCategory } from '@/types/menu';
 
-const CATEGORY_ICONS: Record<string, string> = {
+const slugIconMap: Record<string, string> = {
   'hot-drinks': '☕',
   'cold-drinks': '🧊',
-  'coffee': '☕',
-  'tea': '🍵',
+  'ice-blended': '🧊',
+  'juices': '🥤',
+  'specialty-drinks': '⭐',
   'desserts': '🍰',
   'pastries': '🥐',
-  'additions': '➕',
-  'extras': '➕',
-  'specialty': '✨',
-  'seasonal': '🍂',
-  'signature': '⭐',
-  'food': '🍽️',
-  'juices': '🧃',
-  'smoothies': '🥤',
-  'milkshakes': '🥛',
+  'bakery': '🥐',
+  'sandwiches': '🥪',
+  'breakfast': '🍳',
+  'lunch': '🍽️',
+  'dinner': '🍽️',
+  'snacks': '🍿',
+  'coffee': '☕',
+  'tea': '🍵',
+  'milkshake': '🥤',
+  'smoothie': '🥤',
   'water': '💧',
   'soda': '🥤',
+  'extras': '✨',
+  'addons': '✨',
+  'add-ons': '✨',
 };
 
-const FALLBACK_ICONS = ['☕', '🍵', '🍰', '🥐', '✨', '🧃', '🥤', '🍽️'];
+const fallbackIcons = ['🍽️', '⭐', '🔥', '❄️', '🧁', '🥐', '🥤', '🍰'];
 
-export function getCategoryIcon(cat: MenuCategory): string {
-  if (cat.icon_emoji) return cat.icon_emoji;
-  if (cat.icon) return cat.icon;
-  const slug = cat.slug?.toLowerCase() || '';
-  if (CATEGORY_ICONS[slug]) return CATEGORY_ICONS[slug];
-  for (const [key, emoji] of Object.entries(CATEGORY_ICONS)) {
-    if (slug.includes(key)) return emoji;
-  }
-  const idx = (cat.sort_order || 0) % FALLBACK_ICONS.length;
-  return FALLBACK_ICONS[idx];
+export function useCategoryIcon(categories: MenuCategory[]): Map<string, string> {
+  return useMemo(() => {
+    const iconMap = new Map<string, string>();
+    let fallbackIdx = 0;
+
+    for (const cat of categories) {
+      const slug = (cat.slug || '').toLowerCase().trim();
+      const nameEn = (cat.name_en || '').toLowerCase().trim();
+
+      if (slugIconMap[slug]) {
+        iconMap.set(cat.id, slugIconMap[slug]);
+      } else if (slugIconMap[nameEn]) {
+        iconMap.set(cat.id, slugIconMap[nameEn]);
+      } else if (cat.icon_emoji && cat.icon_emoji.trim()) {
+        iconMap.set(cat.id, cat.icon_emoji.trim());
+      } else {
+        iconMap.set(cat.id, fallbackIcons[fallbackIdx % fallbackIcons.length]);
+        fallbackIdx++;
+      }
+    }
+
+    return iconMap;
+  }, [categories]);
 }

@@ -1,45 +1,77 @@
 "use client";
 
-import type { MenuCategory, ProductWithCategory } from '@/types/menu';
-import { useLanguage } from './LanguageContext';
-import { useThemeContext } from './ThemeContext';
-import { ProductCard } from './ProductCard';
+import { useLanguage } from "./LanguageContext";
+import { useThemeContext } from "./ThemeContext";
+import { useCategoryIcon } from "./useCategoryIcon";
+import { ProductCard } from "./ProductCard";
+import type { ProductWithCategory, MenuCategory } from "@/types/menu";
 
 interface ProductSectionProps {
   category: MenuCategory;
   products: ProductWithCategory[];
-  onProductClick: (product: ProductWithCategory) => void;
+  onProductClick?: (product: ProductWithCategory) => void;
 }
 
 export function ProductSection({ category, products, onProductClick }: ProductSectionProps) {
   const { lang } = useLanguage();
   const { resolvedTheme } = useThemeContext();
-  const name = lang === 'ar' ? category.name_ar : category.name_en;
+  const isDark = resolvedTheme === 'dark';
+  const iconMap = useCategoryIcon([category]);
+  const icon = iconMap.get(category.id) || '🍽️';
+
+  const catName = lang === 'ar' ? (category.name_ar || category.name_en) : (category.name_en || category.name_ar);
+
+  if (products.length === 0) return null;
 
   return (
-    <section className="mb-4">
-      <div className="flex items-center gap-3 px-4 mb-3">
-        <div className="w-1 h-5 rounded-full" style={{ backgroundColor: '#008CA3' }} />
-        <h2
-          className="text-base font-bold"
-          style={{ color: resolvedTheme === 'dark' ? '#F5F5F5' : '#151515' }}
+    <div className="px-4">
+      {/* Category header */}
+      <div className="flex items-center gap-2.5 mb-3 mt-1">
+        <div
+          className="flex items-center justify-center shrink-0"
+          style={{
+            width: '36px',
+            height: '36px',
+            fontSize: '18px',
+            backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
+            border: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
+            borderRadius: '10px',
+          }}
         >
-          {name}
+          {icon}
+        </div>
+        <h2
+          className="font-bold truncate"
+          style={{
+            fontSize: '16px',
+            color: isDark ? 'var(--dark-text)' : 'var(--light-text)',
+          }}
+        >
+          {catName}
         </h2>
-        <span className="text-xs" style={{ color: '#737373' }}>
+        <span
+          className="shrink-0 rounded-full px-2 py-0.5"
+          style={{
+            fontSize: '11px',
+            fontWeight: 500,
+            backgroundColor: isDark ? 'var(--dark-hover)' : 'var(--light-hover)',
+            color: isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)',
+          }}
+        >
           {products.length}
         </span>
       </div>
 
-      <div className="flex flex-col gap-2 px-4">
+      {/* Product list */}
+      <div className="flex flex-col gap-2">
         {products.map((product) => (
           <ProductCard
             key={product.id}
             product={product}
-            onClick={() => onProductClick(product)}
+            onClick={() => onProductClick?.(product)}
           />
         ))}
       </div>
-    </section>
+    </div>
   );
 }

@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef, useEffect } from 'react';
-import type { MenuCategory } from '@/types/menu';
-import { useLanguage } from './LanguageContext';
-import { useThemeContext } from './ThemeContext';
-import { getCategoryIcon } from './useCategoryIcon';
+import { useLanguage } from "./LanguageContext";
+import { useThemeContext } from "./ThemeContext";
+import { useCategoryIcon } from "./useCategoryIcon";
+import type { MenuCategory } from "@/types/menu";
 
 interface CategoryTabsProps {
   categories: MenuCategory[];
@@ -13,61 +12,67 @@ interface CategoryTabsProps {
 }
 
 export function CategoryTabs({ categories, activeCategorySlug, onCategorySelect }: CategoryTabsProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const activeRef = useRef<HTMLButtonElement>(null);
   const { lang } = useLanguage();
   const { resolvedTheme } = useThemeContext();
+  const iconMap = useCategoryIcon(categories);
 
-  useEffect(() => {
-    if (activeRef.current && scrollRef.current) {
-      const container = scrollRef.current;
-      const el = activeRef.current;
-      const containerRect = container.getBoundingClientRect();
-      const elRect = el.getBoundingClientRect();
-      const offset = elRect.left - containerRect.left - containerRect.width / 2 + elRect.width / 2;
-      container.scrollBy({ left: offset, behavior: 'smooth' });
-    }
-  }, [activeCategorySlug]);
+  const isDark = resolvedTheme === 'dark';
+  const activeBg = 'var(--brand-primary)';
+  const inactiveBg = isDark ? 'var(--dark-card)' : 'var(--light-card)';
+  const inactiveBorder = isDark ? 'var(--dark-border)' : 'var(--light-border)';
+  const textColor = isDark ? 'var(--dark-text)' : 'var(--light-text)';
 
   return (
-    <section id="categories" className="mt-3">
-      <div className="relative">
-        <div
-          ref={scrollRef}
-          className="flex overflow-x-auto no-scrollbar gap-2.5 px-4 pb-3"
-        >
-          {categories.map(cat => {
-            const name = lang === 'ar' ? cat.name_ar : cat.name_en;
-            const isActive = cat.slug === activeCategorySlug;
-            const icon = getCategoryIcon(cat);
-            return (
-              <button
-                key={cat.id}
-                ref={isActive ? activeRef : null}
-                onClick={() => onCategorySelect(cat.slug)}
-                className="flex flex-col items-center gap-1.5 shrink-0 min-w-[64px] transition-all duration-200"
+    <div
+      className="sticky top-[56px] z-30 px-3 py-2.5"
+      style={{
+        backgroundColor: isDark ? 'var(--dark-background)' : 'var(--light-background)',
+      }}
+    >
+      <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+        {categories.map((cat) => {
+          const isActive = cat.slug === activeCategorySlug;
+          const icon = iconMap.get(cat.id) || '🍽️';
+          const label = lang === 'ar' ? (cat.name_ar || cat.name_en) : (cat.name_en || cat.name_ar);
+
+          return (
+            <button
+              key={cat.id}
+              onClick={() => onCategorySelect(cat.slug)}
+              className="flex flex-col items-center shrink-0 transition-all duration-200"
+              style={{
+                width: '74px',
+                gap: '5px',
+              }}
+            >
+              <div
+                className="flex items-center justify-center rounded-full transition-all duration-200"
+                style={{
+                  width: '52px',
+                  height: '52px',
+                  backgroundColor: isActive ? activeBg : inactiveBg,
+                  border: `1.5px solid ${isActive ? activeBg : inactiveBorder}`,
+                  fontSize: '22px',
+                  lineHeight: 1,
+                  color: isActive ? '#fff' : textColor,
+                }}
               >
-                <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all duration-200 border-2"
-                  style={{
-                    backgroundColor: isActive ? '#008CA3' : resolvedTheme === 'dark' ? '#252525' : '#F5F5F5',
-                    borderColor: isActive ? '#008CA3' : 'transparent',
-                    color: isActive ? '#FFFFFF' : '#737373',
-                  }}
-                >
-                  {icon}
-                </div>
-                <span
-                  className="text-xs font-medium text-center leading-tight whitespace-nowrap"
-                  style={{ color: isActive ? '#008CA3' : resolvedTheme === 'dark' ? '#999999' : '#737373' }}
-                >
-                  {name}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                {icon}
+              </div>
+              <span
+                className="text-center leading-tight truncate w-full"
+                style={{
+                  fontSize: '11px',
+                  fontWeight: isActive ? 600 : 400,
+                  color: isActive ? activeBg : (isDark ? 'var(--dark-text-secondary)' : 'var(--light-text-secondary)'),
+                }}
+              >
+                {label}
+              </span>
+            </button>
+          );
+        })}
       </div>
-    </section>
+    </div>
   );
 }
