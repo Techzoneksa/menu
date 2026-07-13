@@ -122,6 +122,17 @@ export const settingsSchema = z.object({
   calories_notice_ar: safeTextNullable,
   calories_notice_en: safeTextNullable,
   show_allergen_legend: z.boolean().default(true),
+  contact_phone: safeTextNullable,
+  contact_whatsapp: safeTextNullable,
+  contact_instagram_url: safeUrl,
+  contact_snapchat_url: safeUrl,
+  contact_tiktok_url: safeUrl,
+  contact_x_url: safeUrl,
+  contact_facebook_url: safeUrl,
+  contact_social_username: safeTextNullable,
+  contact_suggestions_msg_ar: safeTextNullable,
+  contact_suggestions_msg_en: safeTextNullable,
+  show_contact_section: z.boolean().default(true),
 });
 
 export const loginSchema = z.object({

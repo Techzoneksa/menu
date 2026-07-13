@@ -14,6 +14,7 @@ import { ProductSection } from '@/components/menu/ProductSection';
 import { ProductDetailsSheet } from '@/components/menu/ProductDetailsSheet';
 import { MenuSearch } from '@/components/menu/MenuSearch';
 import { MenuNotice } from '@/components/menu/MenuNotice';
+import { ContactSection } from '@/components/menu/ContactSection';
 import { useLanguage } from '@/components/menu/LanguageContext';
 import { useThemeContext } from '@/components/menu/ThemeContext';
 import { BackToTop } from '@/components/menu/BackToTop';
@@ -263,6 +264,8 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
           )}
 
           <MenuNotice settings={settings} />
+
+          <ContactSection settings={settings} />
         </>
       )}
 

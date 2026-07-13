@@ -226,6 +226,136 @@ export default function AdminSettingsPage() {
             )}
           </div>
         </div>
+
+        <div>
+          <h2 className="font-bold text-sm mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">معلومات التواصل</h2>
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={settings.show_contact_section !== false} onChange={e => update('show_contact_section', e.target.checked)} className="rounded" />
+              إظهار قسم التواصل والدعم أسفل المنيو
+            </label>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">رقم الهاتف</label>
+                <input
+                  value={settings.contact_phone || ''}
+                  onChange={e => update('contact_phone', e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none"
+                  dir="ltr"
+                  placeholder="0532424510"
+                />
+                <FieldError field="contact_phone" errors={fieldErrors} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">رقم الواتساب (مع رمز الدولة)</label>
+                <input
+                  value={settings.contact_whatsapp || ''}
+                  onChange={e => update('contact_whatsapp', e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none"
+                  dir="ltr"
+                  placeholder="966532424510"
+                />
+                <FieldError field="contact_whatsapp" errors={fieldErrors} />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">اسم المستخدم في السوشيال ميديا</label>
+              <input
+                value={settings.contact_social_username || ''}
+                onChange={e => update('contact_social_username', e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none"
+                dir="ltr"
+                placeholder="@MAHERKAIFSA"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">رابط إنستغرام</label>
+                <input
+                  value={settings.contact_instagram_url || ''}
+                  onChange={e => update('contact_instagram_url', e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none"
+                  dir="ltr"
+                  placeholder="https://instagram.com/..."
+                />
+                <FieldError field="contact_instagram_url" errors={fieldErrors} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">رابط سناب شات</label>
+                <input
+                  value={settings.contact_snapchat_url || ''}
+                  onChange={e => update('contact_snapchat_url', e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none"
+                  dir="ltr"
+                  placeholder="https://snapchat.com/add/..."
+                />
+                <FieldError field="contact_snapchat_url" errors={fieldErrors} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">رابط تيك توك</label>
+                <input
+                  value={settings.contact_tiktok_url || ''}
+                  onChange={e => update('contact_tiktok_url', e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none"
+                  dir="ltr"
+                  placeholder="https://tiktok.com/@..."
+                />
+                <FieldError field="contact_tiktok_url" errors={fieldErrors} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">رابط X (تويتر)</label>
+                <input
+                  value={settings.contact_x_url || ''}
+                  onChange={e => update('contact_x_url', e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none"
+                  dir="ltr"
+                  placeholder="https://x.com/..."
+                />
+                <FieldError field="contact_x_url" errors={fieldErrors} />
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium mb-1">رابط فيسبوك</label>
+                <input
+                  value={settings.contact_facebook_url || ''}
+                  onChange={e => update('contact_facebook_url', e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none"
+                  dir="ltr"
+                  placeholder="https://facebook.com/..."
+                />
+                <FieldError field="contact_facebook_url" errors={fieldErrors} />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">رسالة الملاحظات والشكاوى بالعربية</label>
+                <textarea
+                  value={settings.contact_suggestions_msg_ar || ''}
+                  onChange={e => update('contact_suggestions_msg_ar', e.target.value)}
+                  rows={3}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none resize-none"
+                  placeholder="السلام عليكم،&#10;لدي ملاحظة أو شكوى بخصوص منيو ماهر كيف."
+                />
+                <FieldError field="contact_suggestions_msg_ar" errors={fieldErrors} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">رسالة الملاحظات والشكاوى بالإنجليزية</label>
+                <textarea
+                  value={settings.contact_suggestions_msg_en || ''}
+                  onChange={e => update('contact_suggestions_msg_en', e.target.value)}
+                  rows={3}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none resize-none"
+                  dir="ltr"
+                  placeholder="Hello,&#10;I have a suggestion or complaint regarding Maher Kaif Menu."
+                />
+                <FieldError field="contact_suggestions_msg_en" errors={fieldErrors} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

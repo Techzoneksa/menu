@@ -136,6 +136,17 @@ export interface MenuSettings {
   calories_notice_ar: string | null;
   calories_notice_en: string | null;
   show_allergen_legend: boolean | null;
+  contact_phone: string | null;
+  contact_whatsapp: string | null;
+  contact_instagram_url: string | null;
+  contact_snapchat_url: string | null;
+  contact_tiktok_url: string | null;
+  contact_x_url: string | null;
+  contact_facebook_url: string | null;
+  contact_social_username: string | null;
+  contact_suggestions_msg_ar: string | null;
+  contact_suggestions_msg_en: string | null;
+  show_contact_section: boolean | null;
   updated_at: string;
 }
 
