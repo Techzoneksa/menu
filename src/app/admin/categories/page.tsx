@@ -7,8 +7,6 @@ import { Plus, Pencil, Trash2, Eye, EyeOff, GripVertical, Loader2 } from 'lucide
 import { DeleteDialog } from '@/components/admin/DeleteDialog';
 import { ImageUploader } from '@/components/admin/ImageUploader';
 
-const iconOptions = ['Coffee', 'CupSoda', 'CoffeePot', 'Cake'];
-
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<MenuCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +21,6 @@ export default function AdminCategoriesPage() {
   const [formNameAr, setFormNameAr] = useState('');
   const [formNameEn, setFormNameEn] = useState('');
   const [formSlug, setFormSlug] = useState('');
-  const [formIcon, setFormIcon] = useState<string | null>(null);
   const [formImageUrl, setFormImageUrl] = useState<string | null>(null);
   const [formSortOrder, setFormSortOrder] = useState(0);
   const [formIsVisible, setFormIsVisible] = useState(true);
@@ -49,7 +46,6 @@ export default function AdminCategoriesPage() {
     setFormNameAr('');
     setFormNameEn('');
     setFormSlug('');
-    setFormIcon(null);
     setFormImageUrl(null);
     setFormSortOrder(0);
     setFormIsVisible(true);
@@ -63,7 +59,6 @@ export default function AdminCategoriesPage() {
     setFormNameAr(cat.name_ar);
     setFormNameEn(cat.name_en);
     setFormSlug(cat.slug);
-    setFormIcon(cat.icon);
     setFormImageUrl(cat.image_url);
     setFormSortOrder(cat.sort_order);
     setFormIsVisible(cat.is_visible);
@@ -77,7 +72,7 @@ export default function AdminCategoriesPage() {
       name_ar: formNameAr,
       name_en: formNameEn,
       slug: formSlug,
-      icon: formIcon,
+      icon: null,
       image_url: formImageUrl,
       sort_order: formSortOrder,
       is_visible: formIsVisible,
@@ -153,6 +148,12 @@ export default function AdminCategoriesPage() {
         {categories.map(cat => (
           <div key={cat.id} className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm flex items-center gap-3">
             <GripVertical size={16} className="opacity-30 shrink-0" />
+            {cat.image_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={cat.image_url} alt="" className="w-12 h-12 rounded-full object-cover shrink-0 border border-gray-200 dark:border-gray-600" />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 shrink-0" />
+            )}
             <div className="flex-1 min-w-0">
               <p className="font-medium text-sm truncate">{cat.name_ar}</p>
               <p className="text-xs text-gray-500 truncate">{cat.name_en}</p>
@@ -195,16 +196,6 @@ export default function AdminCategoriesPage() {
               <div>
                 <label className="block text-sm font-medium mb-1">Slug *</label>
                 <input value={formSlug} onChange={e => setFormSlug(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none focus:ring-2 focus:ring-[#F26522]" dir="ltr" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">الأيقونة</label>
-                <div className="flex gap-2">
-                  {iconOptions.map(icon => (
-                    <button key={icon} type="button" onClick={() => setFormIcon(formIcon === icon ? null : icon)} className={`px-3 py-1.5 rounded-lg text-xs border ${formIcon === icon ? 'border-[#F26522] bg-[#F26522]/10' : 'border-gray-200 dark:border-gray-600'}`}>
-                      {icon}
-                    </button>
-                  ))}
-                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">الترتيب</label>

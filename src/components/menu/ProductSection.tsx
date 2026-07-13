@@ -2,7 +2,9 @@
 
 import { useLanguage } from "./LanguageContext";
 import { useThemeContext } from "./ThemeContext";
-import { useCategoryIcon } from "./useCategoryIcon";
+import { useCategoryVisual } from "./useCategoryIcon";
+import { CategoryImage } from "./CategoryImage";
+import { getImageUrl } from "./getImageUrl";
 import { ProductCard } from "./ProductCard";
 import type { ProductWithCategory, MenuCategory } from "@/types/menu";
 
@@ -16,8 +18,9 @@ export function ProductSection({ category, products, onProductClick }: ProductSe
   const { lang } = useLanguage();
   const { resolvedTheme } = useThemeContext();
   const isDark = resolvedTheme === 'dark';
-  const iconMap = useCategoryIcon([category]);
-  const icon = iconMap.get(category.id) || '🍽️';
+  const visualMap = useCategoryVisual([category]);
+  const visual = visualMap.get(category.id);
+  const imgUrl = visual?.imageUrl ? getImageUrl(visual.imageUrl, resolvedTheme) : null;
 
   const catName = lang === 'ar' ? (category.name_ar || category.name_en) : (category.name_en || category.name_ar);
 
@@ -34,19 +37,7 @@ export function ProductSection({ category, products, onProductClick }: ProductSe
           marginTop: '4px',
         }}
       >
-        <div
-          className="flex items-center justify-center shrink-0"
-          style={{
-            width: '28px',
-            height: '28px',
-            fontSize: '15px',
-            backgroundColor: isDark ? 'var(--dark-card)' : 'var(--light-card)',
-            border: `1px solid ${isDark ? 'var(--dark-border)' : 'var(--light-border)'}`,
-            borderRadius: '8px',
-          }}
-        >
-          {icon}
-        </div>
+        <CategoryImage imageUrl={imgUrl} label={catName} size="sm" rounded />
         <h2
           className="font-bold truncate min-w-0"
           style={{

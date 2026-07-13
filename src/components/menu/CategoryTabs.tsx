@@ -2,7 +2,9 @@
 
 import { useLanguage } from "./LanguageContext";
 import { useThemeContext } from "./ThemeContext";
-import { useCategoryIcon } from "./useCategoryIcon";
+import { useCategoryVisual } from "./useCategoryIcon";
+import { CategoryImage } from "./CategoryImage";
+import { getImageUrl } from "./getImageUrl";
 import type { MenuCategory } from "@/types/menu";
 
 interface CategoryTabsProps {
@@ -14,7 +16,7 @@ interface CategoryTabsProps {
 export function CategoryTabs({ categories, activeCategorySlug, onCategorySelect }: CategoryTabsProps) {
   const { lang } = useLanguage();
   const { resolvedTheme } = useThemeContext();
-  const iconMap = useCategoryIcon(categories);
+  const visualMap = useCategoryVisual(categories);
 
   const isDark = resolvedTheme === 'dark';
 
@@ -34,7 +36,8 @@ export function CategoryTabs({ categories, activeCategorySlug, onCategorySelect 
       >
         {categories.map((cat) => {
           const isActive = cat.slug === activeCategorySlug;
-          const icon = iconMap.get(cat.id) || '🍽️';
+          const visual = visualMap.get(cat.id);
+          const imgUrl = visual?.imageUrl ? getImageUrl(visual.imageUrl, resolvedTheme) : null;
           const label = lang === 'ar' ? (cat.name_ar || cat.name_en) : (cat.name_en || cat.name_ar);
 
           return (
@@ -43,25 +46,25 @@ export function CategoryTabs({ categories, activeCategorySlug, onCategorySelect 
               onClick={() => onCategorySelect(cat.slug)}
               className="flex flex-col items-center shrink-0"
               style={{
-                width: '80px',
+                width: '84px',
                 gap: '6px',
               }}
             >
-              {/* Icon circle */}
+              {/* Image circle (only if image_url exists) */}
               <div
-                className="flex items-center justify-center rounded-full shrink-0"
+                className="flex items-center justify-center shrink-0"
                 style={{
-                  width: '56px',
-                  height: '56px',
-                  fontSize: '24px',
-                  lineHeight: 1,
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '9999px',
                   backgroundColor: isActive
                     ? 'var(--brand-primary)'
                     : (isDark ? 'var(--dark-card)' : 'var(--light-card)'),
                   border: `2px solid ${isActive ? 'var(--brand-primary)' : (isDark ? 'var(--dark-border)' : 'var(--light-border)')}`,
+                  overflow: 'hidden',
                 }}
               >
-                {icon}
+                <CategoryImage imageUrl={imgUrl} label={label} size="md" />
               </div>
 
               {/* Label */}
