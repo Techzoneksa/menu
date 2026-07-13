@@ -15,7 +15,8 @@ interface ImageUploaderProps {
 }
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const BLOCKED_EXTENSIONS = ['svg', 'exe', 'bat', 'cmd', 'com', 'msi', 'scr', 'pif', 'vbs', 'js', 'sh', 'php', 'asp', 'aspx', 'jsp'];
+const ALLOWED_MIME_PREFIX = 'image/';
+const BLOCKED_EXTENSIONS = ['svg', 'gif', 'exe', 'bat', 'cmd', 'com', 'msi', 'scr', 'pif', 'vbs', 'js', 'sh', 'php', 'asp', 'aspx', 'jsp'];
 const MAX_SIZE = 5 * 1024 * 1024;
 
 function extractStoragePath(url: string, bucket: string): string | null {
@@ -26,13 +27,13 @@ function extractStoragePath(url: string, bucket: string): string | null {
 }
 
 function validateFile(file: File): string | null {
-  if (!ALLOWED_TYPES.includes(file.type)) {
-    return 'نوع الملف غير مدعوم. استخدم JPG، PNG، WebP فقط.';
+  if (!ALLOWED_TYPES.includes(file.type) || !file.type.startsWith(ALLOWED_MIME_PREFIX)) {
+    return 'نوع الملف غير مدعوم. يُسمح فقط بـ JPG و PNG و WebP.';
   }
 
   const ext = file.name.split('.').pop()?.toLowerCase() || '';
   if (BLOCKED_EXTENSIONS.includes(ext)) {
-    return 'امتداد الملف محظور.';
+    return 'امتداد الملف محظور (SVG / GIF / ملفات تنفيذية غير مسموح بها).';
   }
 
   if (file.size > MAX_SIZE) {
