@@ -165,6 +165,67 @@ export default function AdminSettingsPage() {
           <h2 className="font-bold text-sm mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">اللغة</h2>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={settings.english_enabled} onChange={e => update('english_enabled', e.target.checked)} className="rounded" /> تفعيل اللغة الإنجليزية</label>
         </div>
+
+        <div>
+          <h2 className="font-bold text-sm mb-3 pb-2 border-b border-gray-100 dark:border-gray-700">قسم الإشعارات أسفل المنيو</h2>
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={settings.show_menu_notice !== false} onChange={e => update('show_menu_notice', e.target.checked)} className="rounded" />
+              إظهار قسم الإشعارات (ضريبة + سعرات + مسببات حساسية)
+            </label>
+
+            {settings.show_menu_notice !== false && (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">نص الضريبة بالعربية</label>
+                    <input
+                      value={settings.vat_notice_ar || ''}
+                      onChange={e => update('vat_notice_ar', e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">نص الضريبة بالإنجليزية</label>
+                    <input
+                      value={settings.vat_notice_en || ''}
+                      onChange={e => update('vat_notice_en', e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none"
+                      dir="ltr"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">إرشاد السعرات بالعربية (سطر لكل فئة)</label>
+                    <textarea
+                      value={settings.calories_notice_ar || ''}
+                      onChange={e => update('calories_notice_ar', e.target.value)}
+                      rows={3}
+                      className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none resize-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">إرشاد السعرات بالإنجليزية (سطر لكل فئة)</label>
+                    <textarea
+                      value={settings.calories_notice_en || ''}
+                      onChange={e => update('calories_notice_en', e.target.value)}
+                      rows={3}
+                      className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-transparent text-sm outline-none resize-none"
+                      dir="ltr"
+                    />
+                  </div>
+                </div>
+
+                <label className="flex items-center gap-2 text-sm">
+                  <input type="checkbox" checked={settings.show_allergen_legend !== false} onChange={e => update('show_allergen_legend', e.target.checked)} className="rounded" />
+                  إظهار قائمة مسببات الحساسية
+                </label>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

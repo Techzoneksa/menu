@@ -130,6 +130,12 @@ export interface MenuSettings {
   qr_bg: string | null;
   qr_text_ar: string | null;
   qr_text_en: string | null;
+  show_menu_notice: boolean | null;
+  vat_notice_ar: string | null;
+  vat_notice_en: string | null;
+  calories_notice_ar: string | null;
+  calories_notice_en: string | null;
+  show_allergen_legend: boolean | null;
   updated_at: string;
 }
 

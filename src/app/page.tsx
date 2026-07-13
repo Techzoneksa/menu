@@ -13,6 +13,7 @@ import { CategoryTabs } from '@/components/menu/CategoryTabs';
 import { ProductSection } from '@/components/menu/ProductSection';
 import { ProductDetailsSheet } from '@/components/menu/ProductDetailsSheet';
 import { MenuSearch } from '@/components/menu/MenuSearch';
+import { MenuNotice } from '@/components/menu/MenuNotice';
 import { useLanguage } from '@/components/menu/LanguageContext';
 import { useThemeContext } from '@/components/menu/ThemeContext';
 import { BackToTop } from '@/components/menu/BackToTop';
@@ -241,7 +242,7 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
             onCategorySelect={handleCategorySelect}
           />
 
-          <div className="flex flex-col" style={{ gap: '20px', paddingBottom: '32px', paddingTop: '4px' }}>
+          <div className="flex flex-col" style={{ gap: '20px', paddingBottom: '8px', paddingTop: '4px' }}>
             {categories.map(cat => (
               <div key={cat.id} id={`category-${cat.slug}`}>
                 <ProductSection
@@ -260,6 +261,8 @@ function MenuInner({ initialSettings }: { initialSettings: MenuSettings | null }
               </p>
             </div>
           )}
+
+          <MenuNotice settings={settings} />
         </>
       )}
 

@@ -116,6 +116,12 @@ export const settingsSchema = z.object({
   qr_bg: hexColor,
   qr_text_ar: safeTextNullable,
   qr_text_en: safeTextNullable,
+  show_menu_notice: z.boolean().default(true),
+  vat_notice_ar: safeTextNullable,
+  vat_notice_en: safeTextNullable,
+  calories_notice_ar: safeTextNullable,
+  calories_notice_en: safeTextNullable,
+  show_allergen_legend: z.boolean().default(true),
 });
 
 export const loginSchema = z.object({
